@@ -204,14 +204,15 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
       </div>
 
       {/* Adobe Footer */}
-      <footer className="bg-[#fafafa] border-t border-gray-200 py-4 px-4">
-        <div className="flex flex-col items-center gap-3">
-          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-500">
-            <a href="https://www.adobe.com/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Privacy</a>
-            <a href="https://www.adobe.com/legal/terms.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Terms of Use</a>
-            <a href="https://www.adobe.com/privacy/cookies.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Cookie preferences</a>
-          </div>
-          <p className="text-xs text-gray-400">Copyright © 2026 Adobe. All rights reserved.</p>
+      <footer className="bg-[#fafafa] border-t border-gray-200 py-3 px-6">
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-gray-500">
+          <a href="https://www.adobe.com/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Privacy</a>
+          <span className="text-gray-300">|</span>
+          <a href="https://www.adobe.com/legal/terms.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Terms of Use</a>
+          <span className="text-gray-300">|</span>
+          <a href="https://www.adobe.com/privacy/cookies.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Cookie preferences</a>
+          <span className="text-gray-300">|</span>
+          <span className="text-gray-400">Copyright © 2026 Adobe. All rights reserved.</span>
         </div>
       </footer>
     </div>
