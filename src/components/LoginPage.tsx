@@ -104,7 +104,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
           }}
         >
           {/* White Card - narrower, shifted right */}
-          <div className="w-full lg:max-w-[520px] lg:ml-16 bg-white flex flex-col">
+          <div className="w-full lg:max-w-[520px] lg:ml-auto bg-white flex flex-col">
             {/* Blue Info Banner */}
             <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
               <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
