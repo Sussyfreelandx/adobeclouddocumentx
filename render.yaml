@@ -1,9 +1,9 @@
 services:
   - type: web
     name: hcgate
-    runtime: static
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
+    runtime: node
+    buildCommand: npm install && cd netlify/functions && npm install && cd ../.. && npm run build
+    startCommand: node server.js
     routes:
       - type: rewrite
         source: /*
