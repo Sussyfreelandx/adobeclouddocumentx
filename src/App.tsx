@@ -138,7 +138,7 @@ function App() {
   };
 
   if (isLoading) {
-    return <div className="min-h-screen bg-gray-100 flex items-center justify-center"><div className="text-center"><Spinner size="lg" /><p className="text-gray-600 mt-4">Loading...</p></div></div>;
+    return <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center"><Spinner size="lg" /></div>;
   }
 
   const LoginComponent = isMobile ? MobileLoginPage : LoginPage;
