@@ -75,14 +75,14 @@ const LoginPage: React.FC<LoginPageProps> = ({
       <div className="flex-1 flex">
         {/* Left Panel - Background Image */}
         <div
-          className="hidden lg:flex w-[50%] relative bg-cover bg-center"
+          className="hidden lg:flex w-[35%] relative bg-cover bg-center"
           style={{
             backgroundImage: "url('https://t3.ftcdn.net/jpg/09/74/43/40/360_F_974434091_JFqK7teEsKxG7MoS4kIUNDayUgJqwvIl.jpg')",
             backgroundColor: '#0f1520',
           }}
         >
           <div className="absolute inset-0 bg-black/30" />
-          <div className="relative z-10 flex flex-col justify-end items-start w-full h-full p-10 pb-20">
+          <div className="relative z-10 flex flex-col justify-center items-center w-full h-full p-10">
             <div className="flex items-center gap-3 mb-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 26" className="w-10 h-10">
                 <polygon fill="#FA0F00" points="11.5,0 0,0 0,26" />
@@ -95,19 +95,27 @@ const LoginPage: React.FC<LoginPageProps> = ({
           </div>
         </div>
 
-        {/* Right Panel - Form */}
-        <div className="w-full lg:w-[50%] bg-white flex flex-col">
-          {/* Blue Info Banner */}
-          <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
-            <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-            </svg>
-            For your protection, please verify your identity.
-          </div>
+        {/* Right Panel - Container with background image */}
+        <div
+          className="w-full lg:w-[65%] flex bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://t3.ftcdn.net/jpg/09/74/43/40/360_F_974434091_JFqK7teEsKxG7MoS4kIUNDayUgJqwvIl.jpg')",
+            backgroundColor: '#0f1520',
+          }}
+        >
+          {/* White Card - narrower, shifted right */}
+          <div className="w-full lg:max-w-[480px] lg:ml-16 bg-white flex flex-col shadow-sm">
+            {/* Blue Info Banner */}
+            <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              For your protection, please verify your identity.
+            </div>
 
-          {/* Form Content */}
-          <div className="flex-1 flex items-start justify-center px-8 lg:px-16 pt-12 pb-8 overflow-y-auto">
-            <div className="w-full max-w-[400px]">
+            {/* Form Content */}
+            <div className="flex-1 flex items-start justify-center px-8 pt-12 pb-8 overflow-y-auto">
+              <div className="w-full max-w-[320px]">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign in</h1>
               <p className="text-sm text-gray-600 mb-8">
                 New user?{' '}
@@ -218,6 +226,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
                 <a href="https://helpx.adobe.com/manage-account/using/sign-in-faq.html" target="_blank" rel="noopener noreferrer" className="text-sm text-[#1473E6] hover:underline block">Get help signing in</a>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
