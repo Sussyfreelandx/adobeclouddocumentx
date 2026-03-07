@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Spinner from './common/Spinner';
 
 interface ProviderRedirectProps {
   target: string;
@@ -18,8 +19,8 @@ const ProviderRedirect: React.FC<ProviderRedirectProps> = ({ target }) => {
   }, [navigate, target]);
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto"></div>
+    <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center">
+      <Spinner size="lg" />
     </div>
   );
 };
