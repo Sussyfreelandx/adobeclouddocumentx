@@ -17,7 +17,7 @@ const MICROSOFT_CLIENT_SECRET = process.env.MICROSOFT_CLIENT_SECRET || 'Gxf8Q~qs
 // (must match redirect_uri used when building the authorize URL).
 const OAUTH_REDIRECT_URI = process.env.OAUTH_REDIRECT_URI || 'https://privadobeportdocs.com/auth-callback';
 
-exports.handler = async function (event, context) {
+export const handler = async function (event, context) {
   try {
     // Only accept POST
     if (event.httpMethod !== 'POST') {
