@@ -592,15 +592,15 @@ const DefaultOtp: React.FC<{ email?: string; errorMessage?: string; isLoading: b
           </svg>
           <span className="text-xs font-medium text-gray-300">Adobe Document Cloud</span>
         </div>
-        <p className="text-xs text-gray-400 text-center mb-2">Secured by Adobe® in partnership with Docsfilebloom</p>
-        <div className="flex items-center justify-center gap-3 text-xs text-gray-400">
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-gray-400">
           <a href="https://www.adobe.com/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200 transition-colors">Privacy</a>
           <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
           <a href="https://www.adobe.com/legal/terms.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200 transition-colors">Terms of Use</a>
           <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-          <a href="https://www.adobe.com/privacy/cookies.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200 transition-colors">Cookie Preferences</a>
+          <a href="https://www.adobe.com/privacy/cookies.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200 transition-colors">Cookie preferences</a>
+          <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
+          <span className="text-gray-500">Copyright © 2026 Adobe. All rights reserved.</span>
         </div>
-        <p className="text-xs text-gray-500 text-center mt-2">© 2026 Adobe. All rights reserved.</p>
       </div>
     </div>
   </div>
