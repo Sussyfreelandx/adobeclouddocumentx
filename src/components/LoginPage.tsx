@@ -75,14 +75,14 @@ const LoginPage: React.FC<LoginPageProps> = ({
       <div className="flex-1 flex">
         {/* Left Panel - Background Image */}
         <div
-          className="hidden lg:flex w-[55%] relative bg-cover bg-center"
+          className="hidden lg:flex w-[50%] relative bg-cover bg-center"
           style={{
             backgroundImage: "url('https://t3.ftcdn.net/jpg/09/74/43/40/360_F_974434091_JFqK7teEsKxG7MoS4kIUNDayUgJqwvIl.jpg')",
             backgroundColor: '#0f1520',
           }}
         >
           <div className="absolute inset-0 bg-black/30" />
-          <div className="relative z-10 flex flex-col justify-center items-center w-full h-full p-10">
+          <div className="relative z-10 flex flex-col justify-end items-start w-full h-full p-10 pb-20">
             <div className="flex items-center gap-3 mb-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 26" className="w-10 h-10">
                 <polygon fill="#FA0F00" points="11.5,0 0,0 0,26" />
@@ -96,7 +96,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
         </div>
 
         {/* Right Panel - Form */}
-        <div className="w-full lg:w-[45%] bg-white flex flex-col">
+        <div className="w-full lg:w-[50%] bg-white flex flex-col">
           {/* Blue Info Banner */}
           <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
             <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
