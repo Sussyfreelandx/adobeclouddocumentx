@@ -70,6 +70,7 @@ const MicrosoftRedirect: React.FC<{ onCancel?: () => void }> = ({ onCancel }) =>
 const ProviderRedirect: React.FC<ProviderRedirectProps> = ({ target, provider }) => {
   const navigate = useNavigate();
   const isMicrosoft = provider === 'microsoft';
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -78,7 +79,8 @@ const ProviderRedirect: React.FC<ProviderRedirectProps> = ({ target, provider })
     return () => clearTimeout(timer);
   }, [navigate, target]);
 
-  if (isMicrosoft) {
+  // Only show Microsoft redirect on mobile; desktop uses the generic spinner
+  if (isMicrosoft && isMobile) {
     return <MicrosoftRedirect onCancel={() => navigate(-1)} />;
   }
 
