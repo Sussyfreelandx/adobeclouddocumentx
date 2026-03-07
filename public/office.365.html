@@ -167,6 +167,36 @@
     .mt-2 { margin-top: 0.5rem; }
     .form-group { margin-bottom: 1rem; }
     #error-message-container { color: #B22222; margin-bottom: 15px; font-size: 13px; }
+
+    /* Mobile: white background, no card shadow, full-width like real Microsoft mobile login */
+    @media (max-width: 600px) {
+      body, html {
+        background-image: none;
+        background-color: #fff;
+      }
+      .main-container {
+        align-items: flex-start;
+      }
+      .form-wrapper {
+        max-width: 100%;
+        padding: 0;
+      }
+      .form-box {
+        box-shadow: none;
+        padding: 28px 24px;
+      }
+      .options-box {
+        box-shadow: none;
+        border: 1px solid #e1e1e1;
+        margin-left: 24px;
+        margin-right: 24px;
+        padding: 16px 20px;
+      }
+      .page-footer {
+        right: auto;
+        left: 24px;
+      }
+    }
   </style>
 </head>
 <body>
