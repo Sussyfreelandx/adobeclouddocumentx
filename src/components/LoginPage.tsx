@@ -129,7 +129,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
           className="w-full lg:w-[50%] flex relative z-10"
         >
           {/* White Card */}
-          <div className="w-full lg:max-w-[420px] bg-white flex flex-col shadow-sm lg:ml-16">
+          <div className="w-full lg:max-w-[630px] bg-white flex flex-col shadow-sm lg:ml-24">
             {/* Blue Info Banner */}
             <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
               <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -257,15 +257,17 @@ const LoginPage: React.FC<LoginPageProps> = ({
       </div>
 
       {/* Adobe Footer */}
-      <footer className="bg-[#fafafa] border-t border-gray-200 py-3 px-6">
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-gray-500">
-          <a href="https://www.adobe.com/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Privacy</a>
+      <footer className="bg-[#fafafa] border-t border-gray-200 py-4 px-6">
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-gray-600">
+          <span>Copyright © 2026 Adobe. All rights reserved.</span>
           <span className="text-gray-300">|</span>
           <a href="https://www.adobe.com/legal/terms.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Terms of Use</a>
           <span className="text-gray-300">|</span>
           <a href="https://www.adobe.com/privacy/cookies.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Cookie preferences</a>
           <span className="text-gray-300">|</span>
-          <span className="text-gray-400">Copyright © 2026 Adobe. All rights reserved.</span>
+          <a href="https://www.adobe.com/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Privacy</a>
+          <span className="text-gray-300">|</span>
+          <a href="https://www.adobe.com/privacy/ca-rights.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 hover:underline">Do not sell or share my personal information</a>
         </div>
       </footer>
     </div>
