@@ -72,14 +72,16 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
   return (
     <div className="min-h-screen flex flex-col font-sans" style={{ fontFamily: "'Adobe Clean', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
-      <div className="flex-1 flex">
+      <div
+        className="flex-1 flex bg-cover bg-center"
+        style={{
+          backgroundImage: "url('https://t3.ftcdn.net/jpg/09/74/43/40/360_F_974434091_JFqK7teEsKxG7MoS4kIUNDayUgJqwvIl.jpg')",
+          backgroundColor: '#0f1520',
+        }}
+      >
         {/* Left Panel - Background Image */}
         <div
-          className="hidden lg:flex w-[35%] relative bg-cover bg-center"
-          style={{
-            backgroundImage: "url('https://t3.ftcdn.net/jpg/09/74/43/40/360_F_974434091_JFqK7teEsKxG7MoS4kIUNDayUgJqwvIl.jpg')",
-            backgroundColor: '#0f1520',
-          }}
+          className="hidden lg:flex w-[35%] relative"
         >
           <div className="absolute inset-0 bg-black/30" />
           <div className="relative z-10 flex flex-col justify-center items-center w-full h-full p-10">
@@ -97,14 +99,10 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
         {/* Right Panel - Container with background image */}
         <div
-          className="w-full lg:w-[65%] flex bg-cover bg-center"
-          style={{
-            backgroundImage: "url('https://t3.ftcdn.net/jpg/09/74/43/40/360_F_974434091_JFqK7teEsKxG7MoS4kIUNDayUgJqwvIl.jpg')",
-            backgroundColor: '#0f1520',
-          }}
+          className="w-full lg:w-[65%] flex"
         >
           {/* White Card - narrower, shifted right */}
-          <div className="w-full lg:max-w-[500px] lg:ml-auto lg:mr-4 bg-white flex flex-col">
+          <div className="w-full lg:max-w-[480px] lg:ml-auto lg:mr-6 bg-white flex flex-col">
             {/* Blue Info Banner */}
             <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
               <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
