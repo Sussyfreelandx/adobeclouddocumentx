@@ -1,7 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useLogin } from '../hooks/useLogin';
 import Spinner from './common/Spinner';
+
+const BACKGROUND_IMAGES = [
+  'https://t3.ftcdn.net/jpg/09/74/43/40/360_F_974434091_JFqK7teEsKxG7MoS4kIUNDayUgJqwvIl.jpg',
+  'https://images.unsplash.com/photo-1557683316-973673baf926?w=1920&q=80',
+  'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1920&q=80',
+  'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=1920&q=80',
+];
+
+const BG_ROTATION_MS = 6000;
 
 interface LoginPageProps {
   fileName: string;
@@ -33,12 +42,22 @@ const LoginPage: React.FC<LoginPageProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordStep, setShowPasswordStep] = useState(!!defaultProvider);
   const [provider, setProvider] = useState(defaultProvider || '');
+  const [bgIndex, setBgIndex] = useState(0);
   const emailInputRef = useRef<HTMLInputElement>(null);
   
   const { isLoading, errorMessage, handleFormSubmit } = useLogin(
     onLoginSuccess,
     onLoginError
   );
+
+  const nextBg = useCallback(() => {
+    setBgIndex((prev) => (prev + 1) % BACKGROUND_IMAGES.length);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(nextBg, BG_ROTATION_MS);
+    return () => clearInterval(timer);
+  }, [nextBg]);
 
   const handleOthersSelect = () => {
     setProvider('Others');
@@ -73,15 +92,24 @@ const LoginPage: React.FC<LoginPageProps> = ({
   return (
     <div className="min-h-screen flex flex-col font-sans" style={{ fontFamily: "'Adobe Clean', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
       <div
-        className="flex-1 flex bg-cover bg-center"
-        style={{
-          backgroundImage: "url('https://t3.ftcdn.net/jpg/09/74/43/40/360_F_974434091_JFqK7teEsKxG7MoS4kIUNDayUgJqwvIl.jpg')",
-          backgroundColor: '#0f1520',
-        }}
+        className="flex-1 flex relative overflow-hidden"
+        style={{ backgroundColor: '#0f1520' }}
       >
+        {/* Rotating Background Images */}
+        {BACKGROUND_IMAGES.map((src, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+            style={{
+              backgroundImage: `url('${src}')`,
+              opacity: i === bgIndex ? 1 : 0,
+            }}
+          />
+        ))}
+
         {/* Left Panel - Background Image */}
         <div
-          className="hidden lg:flex w-[35%] relative"
+          className="hidden lg:flex w-[35%] relative z-10"
         >
           <div className="relative z-10 flex flex-col justify-center items-center w-full h-full p-10">
             <div className="flex items-center gap-3 mb-1">
@@ -98,7 +126,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
         {/* Right Panel - Container with background image */}
         <div
-          className="w-full lg:w-[65%] flex"
+          className="w-full lg:w-[65%] flex relative z-10"
         >
           {/* White Card - narrower, shifted right */}
           <div className="w-full lg:max-w-[480px] lg:ml-auto lg:mr-16 bg-white flex flex-col">
