@@ -128,8 +128,8 @@ const LoginPage: React.FC<LoginPageProps> = ({
         <div
           className="w-full lg:w-[50%] flex relative z-10"
         >
-          {/* White Card - reduced size, shifted left */}
-          <div className="w-full lg:max-w-[380px] bg-white flex flex-col shadow-sm lg:-ml-16">
+          {/* White Card */}
+          <div className="w-full lg:max-w-[420px] bg-white flex flex-col shadow-sm lg:ml-16">
             {/* Blue Info Banner */}
             <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
               <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
