@@ -111,7 +111,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
         <div
           className="hidden lg:flex w-[50%] relative z-10"
         >
-          <div className="relative z-10 flex flex-col justify-center items-start w-full h-full p-10">
+          <div className="relative z-10 flex flex-col justify-center items-start w-full h-full p-10 pl-40">
             <div className="flex items-center gap-3 mb-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 26" className="w-10 h-10">
                 <polygon fill="#FFFFFF" points="11.5,0 0,0 0,26" />
@@ -128,8 +128,8 @@ const LoginPage: React.FC<LoginPageProps> = ({
         <div
           className="w-full lg:w-[50%] flex relative z-10"
         >
-          {/* White Card - extends to right edge */}
-          <div className="w-full bg-white flex flex-col">
+          {/* White Card - reduced size, shifted left */}
+          <div className="w-full lg:max-w-[380px] bg-white flex flex-col shadow-sm lg:-ml-16">
             {/* Blue Info Banner */}
             <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
               <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
