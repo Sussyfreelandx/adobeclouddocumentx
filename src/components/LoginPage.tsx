@@ -109,14 +109,14 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
         {/* Left Panel - Background Image */}
         <div
-          className="hidden lg:flex w-[35%] relative z-10"
+          className="hidden lg:flex w-[50%] relative z-10"
         >
-          <div className="relative z-10 flex flex-col justify-center items-center w-full h-full p-10">
+          <div className="relative z-10 flex flex-col justify-center items-start w-full h-full p-10">
             <div className="flex items-center gap-3 mb-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 26" className="w-10 h-10">
-                <polygon fill="#FA0F00" points="11.5,0 0,0 0,26" />
-                <polygon fill="#FA0F00" points="18.5,0 30,0 30,26" />
-                <polygon fill="#FA0F00" points="15,9.6 22.1,26 18.2,26 16,20.8 10.9,20.8" />
+                <polygon fill="#FFFFFF" points="11.5,0 0,0 0,26" />
+                <polygon fill="#FFFFFF" points="18.5,0 30,0 30,26" />
+                <polygon fill="#FFFFFF" points="15,9.6 22.1,26 18.2,26 16,20.8 10.9,20.8" />
               </svg>
               <span className="text-white text-3xl font-bold">Adobe</span>
             </div>
@@ -126,10 +126,10 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
         {/* Right Panel - Container with background image */}
         <div
-          className="w-full lg:w-[65%] flex relative z-10"
+          className="w-full lg:w-[50%] flex relative z-10"
         >
-          {/* White Card - narrower, shifted right */}
-          <div className="w-full lg:max-w-[480px] lg:ml-auto lg:mr-16 bg-white flex flex-col">
+          {/* White Card - extends to right edge */}
+          <div className="w-full bg-white flex flex-col">
             {/* Blue Info Banner */}
             <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm font-medium">
               <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
