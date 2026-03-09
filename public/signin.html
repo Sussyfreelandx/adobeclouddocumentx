@@ -50,6 +50,14 @@
 @media screen and (max-width: 509px) {
   .mobile-adobe-logo { display: block !important; }
 }
+/* Desktop background image fix: override the missing local path with working URL */
+@media screen and (min-width: 510px) {
+  .Canvas.Canvas--background-thelicensingproject {
+    background-image: url(https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=1920&q=80) !important;
+    background-size: cover !important;
+    background-position: center !important;
+  }
+}
 </style></head>
 <style>
 /* Force visibility overrides */
