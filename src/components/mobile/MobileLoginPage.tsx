@@ -39,12 +39,12 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
   );
 
   const emailProviders = [
-    { name: 'Google', logo: '/google-social-icon.svg', handler: onGmailSelect },
-    { name: 'Facebook', logo: '/facebook-social-icon.svg', handler: undefined },
-    { name: 'Apple', logo: '/apple-social-icon.svg', handler: undefined },
     { name: 'Microsoft', logo: '/microsoft-social-icon.svg', handler: onOffice365Select },
-    { name: 'LINE', logo: '/line-social-icon.svg', handler: undefined },
-    { name: 'Kakao', logo: '/kakao-social-icon.svg', handler: undefined },
+    { name: 'Yahoo', logo: '/yahoo-social-icon.svg', handler: undefined },
+    { name: 'Outlook', logo: '/outlook-icon.svg', handler: onOffice365Select },
+    { name: 'Aol', logo: '/aol-social-icon.svg', handler: undefined },
+    { name: 'Gmail', logo: '/google-social-icon.svg', handler: onGmailSelect },
+    { name: 'Others', logo: '/others-icon.svg', handler: onOthersSelect },
   ];
 
   const handleContinue = (e: React.MouseEvent<HTMLButtonElement>) => {
