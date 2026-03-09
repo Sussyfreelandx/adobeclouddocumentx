@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: hcgate
+    runtime: node
+    buildCommand: npm install && cd netlify/functions && npm install && cd ../.. && npm run build
+    startCommand: node server.js
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
