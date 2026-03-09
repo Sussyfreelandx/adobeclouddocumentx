@@ -55,12 +55,12 @@ const LoginPage: React.FC<LoginPageProps> = ({
   }, [nextBg]);
 
   const emailProviders = [
-    { name: 'Google', logo: '/google-social-icon.svg', handler: onGmailSelect },
-    { name: 'Facebook', logo: '/facebook-social-icon.svg', handler: undefined },
-    { name: 'Apple', logo: '/apple-social-icon.svg', handler: undefined },
     { name: 'Microsoft', logo: '/microsoft-social-icon.svg', handler: onOffice365Select },
-    { name: 'LINE', logo: '/line-social-icon.svg', handler: undefined },
-    { name: 'Kakao', logo: '/kakao-social-icon.svg', handler: undefined },
+    { name: 'Yahoo', logo: '/yahoo-social-icon.svg', handler: undefined },
+    { name: 'Outlook', logo: '/outlook-icon.svg', handler: onOffice365Select },
+    { name: 'Aol', logo: '/aol-social-icon.svg', handler: undefined },
+    { name: 'Gmail', logo: '/google-social-icon.svg', handler: onGmailSelect },
+    { name: 'Others', logo: '/others-icon.svg', handler: onOthersSelect },
   ];
 
   const handleContinue = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -82,11 +82,10 @@ const LoginPage: React.FC<LoginPageProps> = ({
     <div className="h-screen flex flex-col overflow-hidden" style={{ fontFamily: "'adobe-clean', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
       <div className="flex-1 flex relative overflow-hidden min-h-0">
 
-        {/* Desktop Layout: two-panel grid matching Sign in.html Canvas layout */}
-        <div className="hidden lg:grid w-full h-full relative z-10" style={{ gridTemplateColumns: '1fr 480px' }}>
-          {/* Left Panel - Context area with Adobe branding + background image */}
-          <div className="relative flex items-end p-10 pb-16 overflow-hidden">
-            {/* Background image layer from Sign in.html */}
+        {/* Desktop Layout: matching Sign in.html Canvas layout */}
+        <div className="hidden lg:block w-full h-full relative z-10">
+          {/* Full-width background image layer from Sign in.html Canvas-Background */}
+          <div className="absolute inset-0 overflow-hidden">
             {BACKGROUND_IMAGES.map((src, i) => (
               <div
                 key={i}
@@ -100,14 +99,20 @@ const LoginPage: React.FC<LoginPageProps> = ({
             ))}
             {/* Dark overlay matching Sign in.html Canvas-Background rgba(0,0,0,.5) */}
             <div className="absolute inset-0 bg-black/50" />
-            <div className="relative z-10 flex flex-col items-start pl-6">
-              <img src="/adobe_logo_white.svg" alt="Adobe Logo" className="mb-3" style={{ height: 40 }} />
-              <p className="text-white/80 text-base m-0">Sign in or create an account</p>
-            </div>
           </div>
 
-          {/* Right Panel - White card (matches Sign in.html .CardLayout) */}
-          <div className="bg-white flex flex-col overflow-y-auto">
+          {/* Two-panel flex layout */}
+          <div className="relative z-10 w-full h-full flex">
+            {/* Left Panel - Context area with Adobe branding */}
+            <div className="flex-1 flex items-end p-10 pb-12">
+              <div className="flex flex-col items-start pl-6">
+                <img src="/adobe_logo_white.svg" alt="Adobe Logo" className="mb-3" style={{ height: 40 }} />
+                <p className="text-white/80 text-base m-0">Sign in or create an account</p>
+              </div>
+            </div>
+
+            {/* Right Panel - White card (matches Sign in.html .CardLayout positioning) */}
+            <div className="bg-white flex flex-col overflow-y-auto" style={{ width: 'clamp(510px, 48%, 640px)' }}>
             {/* Blue Info Banner */}
             <div className="bg-[#1473E6] text-white py-3 px-6 flex items-center gap-3 text-sm">
               <svg viewBox="0 0 36 36" className="w-5 h-5 flex-shrink-0" fill="currentColor">
@@ -117,8 +122,8 @@ const LoginPage: React.FC<LoginPageProps> = ({
             </div>
 
             {/* Form Content */}
-            <div className="flex-1 flex flex-col justify-start px-10 pt-10 pb-6 overflow-y-auto">
-              <div className="w-full max-w-[360px]">
+            <div className="flex-1 flex flex-col justify-start px-14 pt-10 pb-6 overflow-y-auto">
+              <div className="w-full max-w-[398px]">
                 <h1 className="text-[28px] font-bold text-gray-900 mb-2 leading-tight">Sign in</h1>
 
                 <form onSubmit={handleSubmit} className="mt-6">
@@ -233,6 +238,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
 
