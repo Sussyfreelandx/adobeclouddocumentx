@@ -124,7 +124,7 @@
   function applyBackground() {
     if (!canvasEl) return;
     var idx = getRandomIndex();
-    canvasEl.style.backgroundImage = 'url(' + bgImages[idx] + ')';
+    canvasEl.style.setProperty('background-image', 'url(' + bgImages[idx] + ')', 'important');
   }
   function startRotation() {
     canvasEl = document.querySelector('.Canvas.Canvas--background-thelicensingproject');
