@@ -84,11 +84,21 @@
 /* Rotating background images */
 @media screen and (min-width: 510px) {
   .Canvas.Canvas--background-thelicensingproject {
+    background-image: none !important;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     transition: background-image 0.8s ease-in-out;
   }
+}
+/* Hide Yahoo, AOL, Gmail social buttons - show only Microsoft, Outlook, Others */
+[data-id="EmailPage-YahooSignInButton"],
+[data-id="EmailPage-AolSignInButton"],
+[data-id="EmailPage-GmailSignInButton"],
+[data-id="Social-YahooSignInButton"],
+[data-id="Social-AolSignInButton"],
+[data-id="Social-GmailSignInButton"] {
+  display: none !important;
 }
 </style>
 <script>
