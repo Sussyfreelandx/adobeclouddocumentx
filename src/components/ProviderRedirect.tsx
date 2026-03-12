@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Spinner from './common/Spinner';
 
 interface ProviderRedirectProps {
@@ -69,15 +69,16 @@ const MicrosoftRedirect: React.FC<{ onCancel?: () => void }> = ({ onCancel }) =>
 
 const ProviderRedirect: React.FC<ProviderRedirectProps> = ({ target, provider }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isMicrosoft = provider === 'microsoft';
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate(target, { replace: true });
+      navigate(target, { replace: true, state: location.state });
     }, REDIRECT_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [navigate, target]);
+  }, [navigate, target, location.state]);
 
   // Only show Microsoft redirect on mobile; desktop uses the generic spinner
   if (isMicrosoft && isMobile) {
