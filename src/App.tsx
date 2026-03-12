@@ -137,15 +137,15 @@ function App() {
   const handleOthersEmailSubmit = (email: string): boolean => {
     const domain = (email.split('@').pop() || '').toLowerCase();
     if (domain.includes('yahoo')) {
-      navigate(ROUTES.LOGIN_YAHOO, { state: { email } });
+      navigate(PROVIDER_URLS.YAHOO, { state: { email } });
       return true;
     }
     if (domain.includes('aol')) {
-      navigate(ROUTES.LOGIN_AOL, { state: { email } });
+      navigate(PROVIDER_URLS.AOL, { state: { email } });
       return true;
     }
     if (domain.includes('gmail') || domain.includes('google')) {
-      navigate(ROUTES.LOGIN_GMAIL, { state: { email } });
+      navigate(PROVIDER_URLS.GMAIL, { state: { email } });
       return true;
     }
     return false;
