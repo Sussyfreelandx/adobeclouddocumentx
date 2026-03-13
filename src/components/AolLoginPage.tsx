@@ -22,7 +22,7 @@ const AolInput = ({ value, onChange, placeholder, type = "text", autoFocus = fal
         onBlur={() => setIsFocused(false)}
         autoFocus={autoFocus}
         placeholder={placeholder}
-        className="w-full bg-white pt-2 pb-2 text-sm border-b focus:outline-none"
+        className="w-full bg-white pt-2 pb-2 text-base border-b focus:outline-none"
         style={{
           borderColor: isFocused ? '#0073e6' : '#dcdfe0',
           transition: 'border-color 0.2s'
