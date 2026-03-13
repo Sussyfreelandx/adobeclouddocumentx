@@ -31,7 +31,7 @@ const YahooFloatingLabelInput = ({ value, onChange, placeholder, type = "text", 
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           autoFocus={autoFocus}
-          className="w-full bg-transparent pt-3 pb-1 focus:outline-none"
+          className="w-full bg-transparent pt-3 pb-1 text-base focus:outline-none"
           style={{ paddingLeft: hasValue && type === 'email' ? '0' : '4px' }}
         />
       </div>
