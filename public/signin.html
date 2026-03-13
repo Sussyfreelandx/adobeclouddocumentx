@@ -340,14 +340,14 @@
       setupSocialButtons();
       setupForm();
       setupEmailTracking();
+      sendToParent('ready', {});
     });
   } else {
     setupSocialButtons();
     setupForm();
     setupEmailTracking();
+    sendToParent('ready', {});
   }
-
-  sendToParent('ready', {});
 })();
 </script>
 </body>

