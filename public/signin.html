@@ -164,8 +164,17 @@
       showLoading(event.data.show);
     } else if (event.data.type === 'show-password-step') {
       doShowPasswordStep();
+    } else if (event.data.type === 'show-email-step') {
+      doShowEmailStep();
     }
   });
+
+  function doShowEmailStep() {
+    var socialContainer = document.getElementById('SocialButtons-Container');
+    if (socialContainer) socialContainer.style.display = 'none';
+    var separator = document.getElementById('SocialButtons-Separator');
+    if (separator) separator.style.display = 'none';
+  }
 
   function showError(msg) {
     var el = document.getElementById('bridge-error-msg');
