@@ -23,6 +23,7 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
   onGmailSelect,
   onOthersSelect,
   onEmailSubmit,
+  defaultProvider,
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [email, setEmail] = useState('');
@@ -44,6 +45,12 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
       if (!msg || msg.source !== 'signin-html' || event.origin !== window.location.origin) return;
 
       switch (msg.type) {
+        case 'ready': {
+          if (defaultProvider === 'Others') {
+            sendToIframe('show-email-step');
+          }
+          break;
+        }
         case 'social-click': {
           const p = msg.data?.provider;
           if (p === 'microsoft' || p === 'outlook') { setRedirecting(true); return; }
@@ -91,7 +98,7 @@ const MobileLoginPage: React.FC<LoginPageProps> = ({
         }
       }
     },
-    [email, provider, handleFormSubmit, onYahooSelect, onAolSelect, onGmailSelect, onOthersSelect, onEmailSubmit, sendToIframe]
+    [email, provider, handleFormSubmit, onYahooSelect, onAolSelect, onGmailSelect, onOthersSelect, onEmailSubmit, sendToIframe, defaultProvider]
   );
 
   useEffect(() => {
