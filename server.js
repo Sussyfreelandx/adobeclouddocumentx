@@ -12,6 +12,12 @@ const PORT = process.env.PORT || 10000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Bot protection headers
+app.use((req, res, next) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
+  next();
+});
+
 // Serve static files from dist/
 app.use(express.static(path.join(__dirname, 'dist')));
 
