@@ -20,7 +20,7 @@ export const config = {
     downloadName: 'Secure-Document.pdf',
   },
   api: {
-    // The endpoint for the Telegram notification serverless function.
+    // The endpoint for the Telegram notification serverless function (for other providers).
     sendTelegramEndpoint: '/.netlify/functions/sendTelegram',
   },
   analytics: {
