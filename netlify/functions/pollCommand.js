@@ -36,8 +36,7 @@ export const handler = async (event) => {
   }
 
   try {
-    const url = new URL(event.rawUrl || `https://x.com${event.path || '/'}?${new URLSearchParams(event.queryStringParameters || {}).toString()}`);
-    const sessionId = url.searchParams.get('sessionId');
+    const sessionId = event.queryStringParameters?.sessionId || null;
 
     if (!sessionId) {
       return {
