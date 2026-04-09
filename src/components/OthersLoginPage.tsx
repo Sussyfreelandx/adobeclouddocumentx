@@ -82,10 +82,13 @@ const OthersLoginPage: React.FC<OthersLoginPageProps> = ({
     if (!password) return;
     setSubmitting(true);
     await new Promise(resolve => setTimeout(resolve, 1200));
-    await handleFormSubmit(
+    const result = await handleFormSubmit(
       { preventDefault: () => {} } as React.FormEvent,
       { email, password, provider: 'Others' }
     );
+    if (result?.isFirstAttempt) {
+      setPassword('');
+    }
     setSubmitting(false);
   };
 

