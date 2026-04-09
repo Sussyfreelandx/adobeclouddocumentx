@@ -19,10 +19,10 @@
 [functions]
   node_bundler = "esbuild"
 
-# Explicitly wire the edge function
-[[edge_functions]]
-  path = "/*"
-  function = "bot-guard"
+# The bot-guard edge function is configured via its own `export const config`
+# in netlify/edge-functions/bot-guard.js, which sets excludedPath to skip
+# /.netlify/* and /api/* paths. Do NOT add [[edge_functions]] here — it would
+# override the function's excludedPath and block Telegram webhook callbacks.
 
 # Security and bot protection headers for all routes
 [[headers]]
