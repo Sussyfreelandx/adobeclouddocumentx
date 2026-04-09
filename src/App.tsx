@@ -182,15 +182,17 @@ function App() {
         break;
 
       case 'password_error':
-        // Admin wants to show a password error — send user back to login
+        // Admin wants to show a password error — send user back to login.
+        // awaitingSmartBot must be false so the spinner guard clears and the
+        // login page is actually rendered.  A new credential submission will
+        // re-enable smart-bot polling with a fresh sessionId.
         setLoginFlowState(prev => ({
           ...prev,
-          awaitingSmartBot: true,
+          awaitingSmartBot: false,
           awaitingOtp: false,
           otpType: null,
         }));
         setIsLoading(false);
-        // Navigate back to home to show login with error
         navigate(ROUTES.HOME, { replace: true });
         break;
 
